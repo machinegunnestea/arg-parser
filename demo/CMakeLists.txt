@@ -1,5 +1,5 @@
 # В современном CMake рекомендуется сразу задавать нужную версию CMake.
-cmake_minimum_required(VERSION 3.27)
+cmake_minimum_required(VERSION 3.28)
 
 # Говорим CMake что за проект.
 project(args_parse_demo_app LANGUAGES CXX)
