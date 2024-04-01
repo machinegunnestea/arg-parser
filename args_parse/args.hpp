@@ -1,5 +1,6 @@
 #pragma once
 
+#include "validator.hpp"
 #include <string>
 #include <unordered_map>
 
@@ -16,9 +17,13 @@ namespace args_parse {
 
 		virtual void setValue(const std::string& value) = 0;
 
+		virtual const Validator* getValidator() const = 0;
+
 	private:
 		char shortName_;
 		std::string longName_;
+	protected:
+		ValidatorShortName shortNameValidator_;
 	};
 
 	class BoolArg : public Arg {
@@ -38,9 +43,11 @@ namespace args_parse {
 		StringArg(char shortName, const std::string& longName);
 		void setValue(const std::string& value) override;
 		const std::string& value() const;
+		const Validator* getValidator() const override;
 
 	private:
 		std::string value_;
+		ValidatorShortName validator_;
 	};
 	class IntArg : public Arg {
 	public:
@@ -48,9 +55,11 @@ namespace args_parse {
 		void setValue(const std::string& value) override;
 		int value() const;
 		bool isDefined() const;
+		const Validator* getValidator() const override;
 
 	private:
 		int value_;
+		ValidatorShortName validator_;
 	};
 
 	class ArgsParser {

@@ -39,9 +39,13 @@ namespace args_parse {
 	}
 
 	void StringArg::setValue(const std::string& value) {
-		value_ = value;
+		if (shortNameValidator_.validate(std::string(1, shortName()))) {
+			value_ = value;
+		}
+		else {
+			std::cerr << "Error: No short name provided for an argument." << std::endl;
+		}
 	}
-
 	const std::string& StringArg::value() const {
 		return value_;
 	}
@@ -51,17 +55,20 @@ namespace args_parse {
 		setLongName(longName);
 	}
 	void IntArg::setValue(const std::string& value) {
-		try {
+		if (validator_.validate(value)) {
 			value_ = std::stoi(value);
 		}
-		catch (const std::exception& e) {
-			std::cerr << "Error: Invalid value for integer argument: " << e.what() << std::endl;
+		else {
+			std::cerr << "Error: Invalid value for integer argument: " << std::endl;
 		}
+		
 	}
 	int IntArg::value() const {
 		return value_;
 	}
-
+	const Validator* IntArg::getValidator() const {
+		return &validator_;
+	}
 	bool IntArg::isDefined() const {
 		return value_;
 	}
