@@ -73,10 +73,10 @@ namespace args_parse {
 		if (!Validator::validateNewArgument(arg))
 			return false;
 
-		if (!Validator::validateShortIsNotSet(arg))
-			return false;
-		if (!Validator::validateLongIsNotSet(arg))
-			return false;
+		//if (!Validator::validateShortIsNotSet(arg))
+		//	return false;
+		//if (!Validator::validateLongIsNotSet(arg))
+		//	return false;
 
 		if (!Validator::validateShortExists(arg, shortNameArgs_))
 			return false;
