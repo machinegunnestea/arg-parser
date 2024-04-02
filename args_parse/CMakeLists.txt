@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.28)
 project(args_parse_library LANGUAGES CXX)
 
 # Определяем библиотеку и указываем из чего она состоит.
-add_library(args_parse STATIC args.cpp args.hpp validator.hpp)
+add_library(args_parse STATIC args.cpp args.hpp validator.cpp validator.hpp)
 
 target_include_directories(args_parse PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/..")
 

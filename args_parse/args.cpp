@@ -1,4 +1,5 @@
 ﻿#include "args.hpp"
+#include "validator.hpp"
 #include <iostream>
 
 namespace args_parse {
@@ -39,13 +40,12 @@ namespace args_parse {
 	}
 
 	void StringArg::setValue(const std::string& value) {
-		if (shortNameValidator_.validate(std::string(1, shortName()))) {
+		int maxLength = 25;
+		if (Validator::validateValuePresence(value) && Validator::validateStringLength(value, maxLength)) {
 			value_ = value;
 		}
-		else {
-			std::cerr << "Error: No short name provided for an argument." << std::endl;
-		}
 	}
+
 	const std::string& StringArg::value() const {
 		return value_;
 	}
@@ -55,46 +55,41 @@ namespace args_parse {
 		setLongName(longName);
 	}
 	void IntArg::setValue(const std::string& value) {
-		if (validator_.validate(value)) {
+		int left = -127;
+		int right = 128;
+		if (Validator::validateValuePresence(value) && Validator::validateIntRange(value, left, right)) {
 			value_ = std::stoi(value);
 		}
-		else {
-			std::cerr << "Error: Invalid value for integer argument: " << std::endl;
-		}
-		
 	}
 	int IntArg::value() const {
 		return value_;
 	}
-	const Validator* IntArg::getValidator() const {
-		return &validator_;
-	}
+
 	bool IntArg::isDefined() const {
 		return value_;
 	}
 
 	bool ArgsParser::add(Arg* arg) {
-		if (!arg) {
-			std::cerr << "Error: Attempted to add a null argument." << std::endl;
+		if (!Validator::validateNewArgument(arg))
 			return false;
-		}
+
+		if (!Validator::validateShortIsNotSet(arg))
+			return false;
+		if (!Validator::validateLongIsNotSet(arg))
+			return false;
+
+		if (!Validator::validateShortExists(arg, shortNameArgs_))
+			return false;
+		if (!Validator::validateLongExists(arg, longNameArgs_))
+			return false;
 
 		if (arg->shortName() != '\0') {
-			if (shortNameArgs_.find(arg->shortName()) != shortNameArgs_.end()) {
-				std::cerr << "Error: Short name '" << arg->shortName() << "' already exists." << std::endl;
-				return false;
-			}
 			shortNameArgs_[arg->shortName()] = arg;
 		}
 
 		if (!arg->longName().empty()) {
-			if (longNameArgs_.find(arg->longName()) != longNameArgs_.end()) {
-				std::cerr << "Error: Long name '" << arg->longName() << "' already exists." << std::endl;
-				return false;
-			}
 			longNameArgs_[arg->longName()] = arg;
 		}
-
 		return true;
 	}
 

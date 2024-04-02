@@ -1,37 +1,21 @@
 #pragma once
+
+#include "args.hpp"
 #include <string>
 
 namespace args_parse {
-	class Validator{
+	class Validator {
 	public:
-		virtual bool validate(const std::string& value) const = 0;
+		static bool validateNewArgument(const Arg* arg);
+		static bool validateValuePresence(const std::string& value);
+
+		static bool validateShortIsNotSet(const Arg* arg);
+		static bool validateShortExists(const Arg* arg, const std::unordered_map<char, Arg*>& shortNameArgs_);
+
+		static bool validateLongIsNotSet(const Arg* arg);
+		static bool validateLongExists(const Arg* arg, const std::unordered_map<std::string, Arg*>& longNameArgs_);
+
+		static bool validateIntRange(const std::string& value, int leftBorder, int rightBorder);
+		static bool validateStringLength(const std::string& value, size_t maxLength);
 	};
-    class ValidatorInt : public Validator {
-    public:
-        bool validate(const std::string& value) const override {
-            try {
-                std::stoi(value);
-                return true;
-            }
-            catch (const std::exception&) {
-                return false;
-            }
-        }
-    };
-    class ValidatorString : public Validator {
-    public:
-        bool validate(const std::string& value) const override {
-            if (value.length() <= 20)
-                return true;
-            else
-                return false;
-        }
-    };
-    class ValidatorShortName : public Validator {
-    public:
-        bool validate(const std::string& value) const override {
-            char shortName = value[0];
-            return shortName != '\0';
-        }
-    };
 }
