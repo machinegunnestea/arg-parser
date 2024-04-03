@@ -108,17 +108,7 @@ namespace args_parse {
 					std::string longName = arg.substr(2);
 					auto iter = longNameArgs_.find(longName);
 					if (iter != longNameArgs_.end()) {
-						if (iter->second->shortName() == 'h') {
-							iter->second->setValue("true");
-						}
-						else {
-							if (i + 1 < argc) {
-								iter->second->setValue(argv[++i]);
-							}
-							else {
-								iter->second->setValue("true");
-							}
-						}
+						executeAgrument(iter->second, argc, argv, i);
 					}
 					else {
 						std::cerr << "Error: Unknown argument '--" << longName << "'" << std::endl;
@@ -128,17 +118,7 @@ namespace args_parse {
 					char shortName = arg[1];
 					auto iter = shortNameArgs_.find(shortName);
 					if (iter != shortNameArgs_.end()) {
-						if (iter->second->shortName() == 'h') {
-							iter->second->setValue("true");
-						}
-						else {
-							if (i + 1 < argc) {
-								iter->second->setValue(argv[++i]);
-							}
-							else {
-								iter->second->setValue("true");
-							}
-						}
+						executeAgrument(iter->second, argc, argv, i);
 					}
 					else {
 						std::cerr << "Error: Unknown argument '-" << shortName << "'" << std::endl;
@@ -147,4 +127,18 @@ namespace args_parse {
 			}
 		}
 	}
+	void ArgsParser::executeAgrument(Arg* arg, int argc, const char** argv, int& i) {
+		if (dynamic_cast<BoolArg*>(arg) != nullptr) {
+			arg->setValue("true");
+		}
+		else {
+			if (i + 1 < argc) {
+				arg->setValue(argv[++i]);
+			}
+			else {
+				arg->setValue("true");
+			}
+		}
+	}
+
 } // namespace args_parse
