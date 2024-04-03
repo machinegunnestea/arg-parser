@@ -1,7 +1,42 @@
 #include <catch2/catch_all.hpp>
-
+#include <args_parse/args.hpp>
+#include <args_parse/validator.hpp>
 #include <iostream>
 #include <memory>
+
+TEST_CASE("Validation of new argument") {
+    args_parse::Validator validator;
+    args_parse::BoolArg arg('b',"bool");
+    REQUIRE(validator.validateNewArgument(&arg) == true);
+}
+TEST_CASE("Validation of null argument") {
+    args_parse::Validator validator;
+    args_parse::BoolArg* arg = nullptr;
+    REQUIRE_FALSE(validator.validateNewArgument(arg));
+}
+//TEST_CASE("Validation of short name existence") {
+//    REQUIRE(6 * 9 == 42);
+//}
+//TEST_CASE("Validation of short name not set") {
+//    REQUIRE(6 * 9 == 42);
+//}
+//TEST_CASE("Validation of long name existence") {
+//    REQUIRE(6 * 9 == 42);
+//}
+//TEST_CASE("Validation of long name not set") {
+//    REQUIRE(6 * 9 == 42);
+//}
+//TEST_CASE("Validation of value presence") {
+//    REQUIRE(6 * 9 == 42);
+//}
+//TEST_CASE("Validation of int value") {
+//    REQUIRE(6 * 9 == 42);
+//}
+//TEST_CASE("Validation of string length") {
+//    REQUIRE(6 * 9 == 42);
+//}
+
+
 
 TEST_CASE("Dummy", "[dummy]")
 {

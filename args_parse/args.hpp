@@ -23,7 +23,7 @@ namespace args_parse {
 
 	class BoolArg : public Arg {
 	public:
-
+		BoolArg();
 		BoolArg(char shortName, const std::string& longName);
 		void setValue(const std::string& value) override;
 		bool isDefined() const;

@@ -1,3 +1,7 @@
+add_test( [==[Validation of new argument]==] D:/cpp/first/arg-parser/build/bin/Release/_unit_test_args_parse.exe [==[Validation of new argument]==]  )
+set_tests_properties( [==[Validation of new argument]==] PROPERTIES WORKING_DIRECTORY D:/cpp/first/arg-parser/build/test)
+add_test( [==[Validation of null argument]==] D:/cpp/first/arg-parser/build/bin/Release/_unit_test_args_parse.exe [==[Validation of null argument]==]  )
+set_tests_properties( [==[Validation of null argument]==] PROPERTIES WORKING_DIRECTORY D:/cpp/first/arg-parser/build/test)
 add_test( Dummy D:/cpp/first/arg-parser/build/bin/Release/_unit_test_args_parse.exe Dummy  )
 set_tests_properties( Dummy PROPERTIES WORKING_DIRECTORY D:/cpp/first/arg-parser/build/test)
 add_test( [==[Section example]==] D:/cpp/first/arg-parser/build/bin/Release/_unit_test_args_parse.exe [==[Section example]==]  )
@@ -8,4 +12,4 @@ add_test( [==[Assertions for exceptions]==] D:/cpp/first/arg-parser/build/bin/Re
 set_tests_properties( [==[Assertions for exceptions]==] PROPERTIES WORKING_DIRECTORY D:/cpp/first/arg-parser/build/test)
 add_test( [==[Assertions with matchers]==] D:/cpp/first/arg-parser/build/bin/Release/_unit_test_args_parse.exe [==[Assertions with matchers]==]  )
 set_tests_properties( [==[Assertions with matchers]==] PROPERTIES WORKING_DIRECTORY D:/cpp/first/arg-parser/build/test)
-set( _unit_test_args_parse_TESTS Dummy [==[Section example]==] [==[Assertions for negation]==] [==[Assertions for exceptions]==] [==[Assertions with matchers]==])
+set( _unit_test_args_parse_TESTS [==[Validation of new argument]==] [==[Validation of null argument]==] Dummy [==[Section example]==] [==[Assertions for negation]==] [==[Assertions for exceptions]==] [==[Assertions with matchers]==])
