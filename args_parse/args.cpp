@@ -105,26 +105,30 @@ namespace args_parse {
 			std::string arg = argv[i];
 			if (arg.size() > 1 && arg[0] == '-') {
 				if (arg[1] == '-') {
-					std::string longName = arg.substr(2);
-					auto iter = longNameArgs_.find(longName);
-					if (iter != longNameArgs_.end()) {
-						executeAgrument(iter->second, argc, argv, i);
-					}
-					else {
-						std::cerr << "Error: Unknown argument '--" << longName << "'" << std::endl;
-					}
+					parseLongArgument(arg.substr(2), argc, argv, i);
 				}
 				else {
-					char shortName = arg[1];
-					auto iter = shortNameArgs_.find(shortName);
-					if (iter != shortNameArgs_.end()) {
-						executeArgument(iter->second, argc, argv, i);
-					}
-					else {
-						std::cerr << "Error: Unknown argument '-" << shortName << "'" << std::endl;
-					}
+					parseShortArgument(arg[1], argc, argv, i);
 				}
 			}
+		}
+	}
+	void ArgsParser::parseShortArgument(char shortName, int argc, const char** argv, int& i) {
+		auto iter = shortNameArgs_.find(shortName);
+		if (iter != shortNameArgs_.end()) {
+			executeArgument(iter->second, argc, argv, i);
+		}
+		else {
+			std::cerr << "Error: Unknown argument '-" << shortName << "'" << std::endl;
+		}
+	}
+	void ArgsParser::parseLongArgument(const std::string& longName, int argc, const char** argv, int& i) {
+		auto iter = longNameArgs_.find(longName);
+		if (iter != longNameArgs_.end()) {
+			executeArgument(iter->second, argc, argv, i);
+		}
+		else {
+			std::cerr << "Error: Unknown argument '--" << longName << "'" << std::endl;
 		}
 	}
 	void ArgsParser::executeArgument(Arg* arg, int argc, const char** argv, int& i) {

@@ -59,6 +59,8 @@ namespace args_parse {
 		void printHelp() const;
 		void parse(int argc, const char** argv);
 		void executeArgument(Arg* arg, int argc, const char** argv, int& i);
+		void parseShortArgument(char shortArg, int argc, const char** argv, int& i);
+		void parseLongArgument(const std::string& longArg, int argc, const char** argv, int& i);
 
 	private:
 		std::unordered_map<char, Arg*> shortNameArgs_;
