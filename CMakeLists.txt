@@ -25,7 +25,20 @@ if (MSVC)
     add_compile_options(/utf-8)
 endif()
 
+# Нам нужен Catch2.
+# ПРИМЕЧАНИЕ: опция CONFIG здесь нужна обязательно, без нее при компиляции
+# под Windows будут недоступны заголовочные файлы Catch2.
+find_package(Catch2 CONFIG REQUIRED)
+
 # Подключаем подпроекты.
 add_subdirectory(args_parse)
 add_subdirectory(demo)
+
+# Разрешаем поддержку unit-тестов.
+include(CTest)
+include(Catch)
+enable_testing()
+
+# Подключаем проект с тестами.
+add_subdirectory(test)
 
