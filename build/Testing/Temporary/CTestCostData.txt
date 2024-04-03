@@ -1,0 +1,6 @@
+Dummy 1 0.0038389
+Section example 1 0.0035355
+Assertions for negation 1 0.0035145
+Assertions for exceptions 1 0.0039664
+Assertions with matchers 1 0.0038768
+---

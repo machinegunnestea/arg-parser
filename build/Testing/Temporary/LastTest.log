@@ -1,3 +1,114 @@
-Start testing: Apr 03 14:09 ???????? (????)
+Start testing: Apr 03 14:12 ???????? (????)
 ----------------------------------------------------------
-End testing: Apr 03 14:09 ???????? (????)
+1/5 Testing: Dummy
+1/5 Test: Dummy
+Command: "D:/cpp/first/arg-parser/build/bin/Release/_unit_test_args_parse.exe" "Dummy"
+Directory: D:/cpp/first/arg-parser/build/test
+"Dummy" start time: Apr 03 14:12 ???????? (????)
+Output:
+----------------------------------------------------------
+Filters: "Dummy"
+Randomness seeded to: 786348857
+===============================================================================
+All tests passed (1 assertion in 1 test case)
+
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"Dummy" end time: Apr 03 14:12 ???????? (????)
+"Dummy" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/5 Testing: Section example
+2/5 Test: Section example
+Command: "D:/cpp/first/arg-parser/build/bin/Release/_unit_test_args_parse.exe" "Section example"
+Directory: D:/cpp/first/arg-parser/build/test
+"Section example" start time: Apr 03 14:12 ???????? (????)
+Output:
+----------------------------------------------------------
+Filters: "Section example"
+Randomness seeded to: 1344058931
+before all sections: 0, 1
+inside the first section: 10, 10
+before all sections: 0, 1
+inside the second section: 0, 0
+on enter into nested #1: 0, 0
+before all sections: 0, 1
+inside the second section: 0, 0
+on enter into nested #2: 0, 0
+before all sections: 0, 1
+inside the second section: 0, 0
+on enter into nested #3: 0, 0
+===============================================================================
+All tests passed (11 assertions in 1 test case)
+
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"Section example" end time: Apr 03 14:12 ???????? (????)
+"Section example" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/5 Testing: Assertions for negation
+3/5 Test: Assertions for negation
+Command: "D:/cpp/first/arg-parser/build/bin/Release/_unit_test_args_parse.exe" "Assertions for negation"
+Directory: D:/cpp/first/arg-parser/build/test
+"Assertions for negation" start time: Apr 03 14:12 ???????? (????)
+Output:
+----------------------------------------------------------
+Filters: "Assertions for negation"
+Randomness seeded to: 1806300307
+===============================================================================
+All tests passed (1 assertion in 1 test case)
+
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"Assertions for negation" end time: Apr 03 14:12 ???????? (????)
+"Assertions for negation" time elapsed: 00:00:00
+----------------------------------------------------------
+
+4/5 Testing: Assertions for exceptions
+4/5 Test: Assertions for exceptions
+Command: "D:/cpp/first/arg-parser/build/bin/Release/_unit_test_args_parse.exe" "Assertions for exceptions"
+Directory: D:/cpp/first/arg-parser/build/test
+"Assertions for exceptions" start time: Apr 03 14:12 ???????? (????)
+Output:
+----------------------------------------------------------
+Filters: "Assertions for exceptions"
+Randomness seeded to: 1860173160
+===============================================================================
+All tests passed (5 assertions in 1 test case)
+
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"Assertions for exceptions" end time: Apr 03 14:12 ???????? (????)
+"Assertions for exceptions" time elapsed: 00:00:00
+----------------------------------------------------------
+
+5/5 Testing: Assertions with matchers
+5/5 Test: Assertions with matchers
+Command: "D:/cpp/first/arg-parser/build/bin/Release/_unit_test_args_parse.exe" "Assertions with matchers"
+Directory: D:/cpp/first/arg-parser/build/test
+"Assertions with matchers" start time: Apr 03 14:12 ???????? (????)
+Output:
+----------------------------------------------------------
+Filters: "Assertions with matchers"
+Randomness seeded to: 337080678
+===============================================================================
+All tests passed (1 assertion in 1 test case)
+
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"Assertions with matchers" end time: Apr 03 14:12 ???????? (????)
+"Assertions with matchers" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Apr 03 14:12 ???????? (????)

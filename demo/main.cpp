@@ -18,7 +18,7 @@ int main(int argc, const char** argv) {
 
 	// Parse arguments
 	parser.parse(argc, argv);
-	//parser.printHelp();
+	parser.printHelp();
 
 	//if help was activated
 	if (help.isDefined()) {
