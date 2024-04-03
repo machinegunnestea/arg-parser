@@ -118,7 +118,7 @@ namespace args_parse {
 					char shortName = arg[1];
 					auto iter = shortNameArgs_.find(shortName);
 					if (iter != shortNameArgs_.end()) {
-						executeAgrument(iter->second, argc, argv, i);
+						executeArgument(iter->second, argc, argv, i);
 					}
 					else {
 						std::cerr << "Error: Unknown argument '-" << shortName << "'" << std::endl;
@@ -127,7 +127,7 @@ namespace args_parse {
 			}
 		}
 	}
-	void ArgsParser::executeAgrument(Arg* arg, int argc, const char** argv, int& i) {
+	void ArgsParser::executeArgument(Arg* arg, int argc, const char** argv, int& i) {
 		if (dynamic_cast<BoolArg*>(arg) != nullptr) {
 			arg->setValue("true");
 		}
