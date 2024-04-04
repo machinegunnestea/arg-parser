@@ -7,13 +7,13 @@ int main(int argc, const char** argv) {
 	// Define arguments
 	args_parse::BoolArg help('h', "help");
 	args_parse::IntArg number('g', "getNumber");
-	args_parse::IntArg number1('ge', "getDa");
+	args_parse::IntArg age('a', "age");
 	args_parse::StringArg output('o', "output");
 
 	// Add arguments to parser
 	parser.add(&help);
 	parser.add(&number);
-	parser.add(&number1);
+	parser.add(&age);
 	parser.add(&output);
 
 	// Parse arguments
@@ -32,8 +32,8 @@ int main(int argc, const char** argv) {
 	if (number.isDefined()) {
 		std::cout << "Input g value: " << number.value() << std::endl;
 	}
-	if (number1.isDefined()) {
-		std::cout << "Input d value: " << number1.value() << std::endl;
+	if (age.isDefined()) {
+		std::cout << "Input d value: " << age.value() << std::endl;
 	}
 	return 0;
 }

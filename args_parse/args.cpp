@@ -23,7 +23,7 @@ namespace args_parse {
 		setShortName(shortName);
 		setLongName(longName);
 	}
-
+	BoolArg::BoolArg() : value_(false) {}
 	void BoolArg::setValue(const std::string& value) {
 		if (value != "false") {
 			value_ = true;
@@ -38,6 +38,7 @@ namespace args_parse {
 		setShortName(shortName);
 		setLongName(longName);
 	}
+	StringArg::StringArg() {}
 
 	void StringArg::setValue(const std::string& value) {
 		int maxLength = 25;
@@ -54,6 +55,8 @@ namespace args_parse {
 		setShortName(shortName);
 		setLongName(longName);
 	}
+	IntArg::IntArg(){}
+
 	void IntArg::setValue(const std::string& value) {
 		int left = -127;
 		int right = 128;

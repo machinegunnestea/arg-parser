@@ -57,7 +57,7 @@ namespace args_parse {
 			return false;
 		}
 		if (intValue < leftBorder || intValue > rightBorder) {
-			std::cerr << "Error: Integer value out of range (."
+			std::cerr << "Error: Integer value out of range ("
 				<< leftBorder
 				<< ";"
 				<< rightBorder

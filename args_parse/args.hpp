@@ -34,7 +34,7 @@ namespace args_parse {
 
 	class StringArg : public Arg {
 	public:
-
+		StringArg();
 		StringArg(char shortName, const std::string& longName);
 		void setValue(const std::string& value) override;
 		const std::string& value() const;
@@ -44,6 +44,7 @@ namespace args_parse {
 	};
 	class IntArg : public Arg {
 	public:
+		IntArg();
 		IntArg(char shortName, const std::string& longName);
 		void setValue(const std::string& value) override;
 		int value() const;

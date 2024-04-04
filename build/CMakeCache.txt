@@ -171,7 +171,7 @@ CMAKE_STATIC_LINKER_FLAGS_RELEASE:STRING=
 // during RELWITHDEBINFO builds.
 CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO:STRING=
 
-//The CMake toolchain file
+//No help, variable specified on the command line.
 CMAKE_TOOLCHAIN_FILE:FILEPATH=D:/cpp/first/arg-parser/build/generators/conan_toolchain.cmake
 
 //If this value is on, makefiles will be generated without the
