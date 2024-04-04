@@ -94,7 +94,7 @@ namespace args_parse {
 		return value_;
 	}
 
-	// добавление аргументав парсер
+	// добавление аргумента в парсер
 	bool ArgsParser::add(Arg* arg) {
 		// проверка: имя у аргумента не пустое
 		if (!Validator::validateNewArgument(arg))
