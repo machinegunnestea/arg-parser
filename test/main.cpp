@@ -30,7 +30,6 @@ TEST_CASE("Validation of arguments", "[args_validation]") {
 		REQUIRE_FALSE(validator.validateShortIsNotSet(&arg));
 	}
 	SECTION("Validation of long name not set") {
-		args_parse::Validator validator;
 		args_parse::BoolArg arg;
 		std::unordered_map<std::string, args_parse::Arg*> longNameArgs;
 		REQUIRE_FALSE(validator.validateLongIsNotSet(&arg));
@@ -117,7 +116,7 @@ TEST_CASE("Parsing of arguments", "[args_parsing]") {
 		parser.add(&arg);
 
 		const char* argv[] = { "args_parse_demo", "-b" };
-		int argc = sizeof(argv) / sizeof(argv[0]);
+		const int argc = std::size(argv);
 
 		parser.parse(argc, argv);
 		REQUIRE(arg.isDefined());
@@ -127,7 +126,7 @@ TEST_CASE("Parsing of arguments", "[args_parsing]") {
 		parser.add(&arg);
 
 		const char* argv[] = { "args_parse_demo", "--bool" };
-		int argc = sizeof(argv) / sizeof(argv[0]);
+		const int argc = std::size(argv);
 
 		parser.parse(argc, argv);
 		REQUIRE(arg.isDefined());
@@ -137,7 +136,7 @@ TEST_CASE("Parsing of arguments", "[args_parsing]") {
 		parser.add(&arg);
 
 		const char* argv[] = { "args_parse_demo", "-s", "value" };
-		int argc = sizeof(argv) / sizeof(argv[0]);
+		const int argc = std::size(argv);
 
 		parser.parse(argc, argv);
 		REQUIRE(arg.value() == "value");
@@ -147,7 +146,7 @@ TEST_CASE("Parsing of arguments", "[args_parsing]") {
 		parser.add(&arg);
 
 		const char* argv[] = { "args_parse_demo", "--string", "value" };
-		int argc = sizeof(argv) / sizeof(argv[0]);
+		const int argc = std::size(argv);
 
 		parser.parse(argc, argv);
 		REQUIRE(arg.value() == "value");
@@ -157,7 +156,7 @@ TEST_CASE("Parsing of arguments", "[args_parsing]") {
 		parser.add(&arg);
 
 		const char* argv[] = { "args_parse_demo", "--long", "value" };
-		int argc = sizeof(argv) / sizeof(argv[0]);
+		const int argc = std::size(argv);
 
 		parser.parse(argc, argv);
 		REQUIRE_FALSE(arg.value() == "value");
@@ -167,7 +166,7 @@ TEST_CASE("Parsing of arguments", "[args_parsing]") {
 		parser.add(&arg);
 
 		const char* argv[] = { "args_parse_demo", "-str", "value" };
-		int argc = sizeof(argv) / sizeof(argv[0]);
+		const int argc = std::size(argv);
 
 		parser.parse(argc, argv);
 		REQUIRE(arg.value() == "value");
@@ -205,7 +204,8 @@ TEST_CASE("Parsing multi arguments", "[multi_parse]") {
 		parser.add(&arg);
 
 		const char* argv[] = { "program", "-m", "10", "20", "30" };
-		int argc = sizeof(argv) / sizeof(argv[0]);
+		const int argc = std::size(argv);
+		//int argc = sizeof(argv) / sizeof(argv[0]);
 
 		parser.parse(argc, argv);
 
@@ -220,7 +220,8 @@ TEST_CASE("Parsing multi arguments", "[multi_parse]") {
 		parser.add(&arg);
 
 		const char* argv[] = { "program", "-m", "true", "false", "true", "false" };
-		int argc = sizeof(argv) / sizeof(argv[0]);
+		const int argc = std::size(argv);
+		//int argc = sizeof(argv) / sizeof(argv[0]);
 
 		parser.parse(argc, argv);
 
@@ -236,7 +237,7 @@ TEST_CASE("Parsing multi arguments", "[multi_parse]") {
 		parser.add(&arg);
 
 		const char* argv[] = { "program", "-m", "value1", "value2", "value3", "-m", "value4" };
-		int argc = sizeof(argv) / sizeof(argv[0]);
+		const int argc = std::size(argv);
 
 		parser.parse(argc, argv);
 
