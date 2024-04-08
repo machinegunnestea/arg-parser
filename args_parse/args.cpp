@@ -210,12 +210,37 @@ namespace args_parse {
 				// если аргумент начинается с --, то он длинный
 				if (arg[1] == '-') {
 					//обрабатываем длинный аргумент
-					parseLongArgument(arg.substr(2), argc, argv, i);
+					size_t equalPos = arg.find('=');
+					if (equalPos != std::string::npos) {
+						// аргумент со знаком равенства
+						std::string longName = arg.substr(2, equalPos - 2);
+						std::string value = arg.substr(equalPos + 1);
+						parseLongArgumentEquals(longName, value);
+					}
+					else {
+						// аргумент без знака равенства
+						parseLongArgument(arg.substr(2), argc, argv, i);
+					}
 				}
 				// если аргумент не является длинным, то считаем его коротким или сокращенным
 				else {
-					//обрабатываем короткий или сокращенный аргумент
-					parseShortArgument(arg[1], argc, argv, i);
+					size_t equalPos = arg.find('=');
+					if (equalPos != std::string::npos) {
+						// аргумент со знаком равенства
+						char shortName = arg[1];
+						std::string value = arg.substr(equalPos + 1);
+						parseShortArgumentEquals(shortName, value);
+					}
+					else if (arg.size() > 2) {
+						// аргумент сразу после короткого имени
+						char shortName = arg[1];
+						std::string value = arg.substr(2);
+						parseShortArgumentEquals(shortName, value);
+					}
+					else {
+						// аргумент без значения
+						parseShortArgument(arg[1], argc, argv, i);
+					}
 				}
 			}
 		}
@@ -232,11 +257,31 @@ namespace args_parse {
 		}
 	}
 
+	void ArgsParser::parseShortArgumentEquals(char shortName, const std::string& value) {
+		auto iter = shortNameArgs_.find(shortName);
+		if (iter != shortNameArgs_.end()) {
+			executeEquals(iter->second, value);
+		}
+		else {
+			std::cerr << "Error: Unknown argument '-" << shortName << "'" << std::endl;
+		}
+	}
+
 	// обработать длинные аргументы
 	void ArgsParser::parseLongArgument(const std::string& longName, int argc, const char** argv, int& i) {
 		auto iter = longNameArgs_.find(longName);
 		if (iter != longNameArgs_.end()) {
 			executeArgument(iter->second, argc, argv, i);
+		}
+		else {
+			std::cerr << "Error: Unknown argument '--" << longName << "'" << std::endl;
+		}
+	}
+
+	void ArgsParser::parseLongArgumentEquals(const std::string& longName, const std::string& value) {
+		auto iter = longNameArgs_.find(longName);
+		if (iter != longNameArgs_.end()) {
+			executeEquals(iter->second, value);
 		}
 		else {
 			std::cerr << "Error: Unknown argument '--" << longName << "'" << std::endl;
@@ -292,6 +337,16 @@ namespace args_parse {
 			else {
 				arg->setValue("true");
 			}
+		}
+	}
+	void ArgsParser::executeEquals(Arg* arg, const std::string& value) {
+		// Если аргумент типа BoolArg, не ожидается значение
+		if (dynamic_cast<BoolArg*>(arg) != nullptr) {
+			arg->setValue("true");
+		}
+		// Для остальных типов данных ожидается значение аргумента
+		else {
+			arg->setValue(value);
 		}
 	}
 } // namespace args_parse
