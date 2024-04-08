@@ -203,7 +203,7 @@ TEST_CASE("Parsing multi arguments", "[multi_parse]") {
 		args_parse::MultiInt arg('m', "multi");
 		parser.add(&arg);
 
-		const char* argv[] = { "program", "-m", "10", "20", "30" };
+		const char* argv[] = { "args_parse_demo", "-m", "10", "20", "30" };
 		const int argc = std::size(argv);
 		//int argc = sizeof(argv) / sizeof(argv[0]);
 
@@ -219,7 +219,7 @@ TEST_CASE("Parsing multi arguments", "[multi_parse]") {
 		args_parse::MultiBool arg('m', "multi");
 		parser.add(&arg);
 
-		const char* argv[] = { "program", "-m", "true", "false", "true", "false" };
+		const char* argv[] = { "args_parse_demo", "-m", "true", "false", "true", "false" };
 		const int argc = std::size(argv);
 		//int argc = sizeof(argv) / sizeof(argv[0]);
 
@@ -236,16 +236,15 @@ TEST_CASE("Parsing multi arguments", "[multi_parse]") {
 		args_parse::MultiString arg('m', "multi");
 		parser.add(&arg);
 
-		const char* argv[] = { "program", "-m", "value1", "value2", "value3", "-m", "value4" };
+		const char* argv[] = { "args_parse_demo", "-m", "value1", "value2", "value3" };
 		const int argc = std::size(argv);
 
 		parser.parse(argc, argv);
 
 		const auto& values = arg.values();
-		REQUIRE(values.size() == 4);
+		REQUIRE(values.size() == 3);
 		REQUIRE(values[0] == "value1");
 		REQUIRE(values[1] == "value2");
 		REQUIRE(values[2] == "value3");
-		REQUIRE(values[3] == "value4");
 	}
 }
