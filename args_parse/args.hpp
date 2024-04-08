@@ -54,6 +54,39 @@ namespace args_parse {
 		int value_;
 	};
 
+	class MultiInt : public Arg {
+	public:
+		MultiInt(char shortName, const std::string& longName);
+		MultiInt();
+		void setValue(const std::string& value) override;
+		const std::vector<int>& values() const;
+		bool isDefined() const;
+	private:
+		std::vector<int> values_;
+	};
+
+	class MultiBool : public Arg {
+	public:
+		MultiBool(char shortName, const std::string& longName);
+		MultiBool();
+		void setValue(const std::string& value) override;
+		const std::vector<bool>& values() const;
+		bool isDefined() const;
+	private:
+		std::vector<bool> values_;
+	};
+
+	class MultiString : public Arg {
+	public:
+		MultiString(char shortName, const std::string& longName);
+		MultiString();
+		void setValue(const std::string& value) override;
+		const std::vector<std::string>& values() const;
+		bool isDefined() const;
+	private:
+		std::vector<std::string> values_;
+	};
+
 	class ArgsParser {
 	public:
 		bool add(Arg* arg);

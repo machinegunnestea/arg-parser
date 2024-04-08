@@ -94,6 +94,75 @@ namespace args_parse {
 		return value_;
 	}
 
+	// MultiInt implementation
+	MultiInt::MultiInt(char shortName, const std::string& longName) {
+		setShortName(shortName);
+		setLongName(longName);
+	}
+
+	MultiInt::MultiInt() {}
+
+	void MultiInt::setValue(const std::string& value) {
+		int intValue;
+		try {
+			intValue = std::stoi(value);
+		}
+		catch (const std::exception& e) {
+			std::cerr << "Error: Invalid integer value: " << e.what() << std::endl;
+			return;
+		}
+		values_.push_back(intValue);
+	}
+
+	const std::vector<int>& MultiInt::values() const {
+		return values_;
+	}
+
+	bool MultiInt::isDefined() const {
+		return !values_.empty();
+	}
+
+	// MultiBool implementation
+	MultiBool::MultiBool(char shortName, const std::string& longName) {
+		setShortName(shortName);
+		setLongName(longName);
+	}
+
+	MultiBool::MultiBool() {}
+
+	void MultiBool::setValue(const std::string& value) {
+		bool boolValue = (value != "false");
+		values_.push_back(boolValue);
+	}
+
+	const std::vector<bool>& MultiBool::values() const {
+		return values_;
+	}
+
+	bool MultiBool::isDefined() const {
+		return !values_.empty();
+	}
+
+	// MultiString implementation
+	MultiString::MultiString(char shortName, const std::string& longName) {
+		setShortName(shortName);
+		setLongName(longName);
+	}
+
+	MultiString::MultiString() {}
+
+	void MultiString::setValue(const std::string& value) {
+		values_.push_back(value);
+	}
+
+	const std::vector<std::string>& MultiString::values() const {
+		return values_;
+	}
+
+	bool MultiString::isDefined() const {
+		return !values_.empty();
+	}
+
 	// добавление аргумента в парсер
 	bool ArgsParser::add(Arg* arg) {
 		// проверка: имя у аргумента не пустое
@@ -176,8 +245,43 @@ namespace args_parse {
 
 	// добавить значения к аргументам
 	void ArgsParser::executeArgument(Arg* arg, int argc, const char** argv, int& i) {
+		// if argument is of MultiInt type
+		if (dynamic_cast<MultiInt*>(arg) != nullptr) {
+			while (i + 1 < argc) {
+				std::string value = argv[i + 1];
+				if (value.empty() || value[0] == '-')
+					break;
+				if (!Validator::validateIntRange(value, -50, 50)) {
+					std::cerr << "Error: Invalid integer value: " << value << std::endl;
+					break;
+				}
+				arg->setValue(value);
+				++i;
+			}
+		}
+		// if argument is of MultiBool type
+		else if (dynamic_cast<MultiBool*>(arg) != nullptr) {
+			while (i + 1 < argc) {
+				std::string value = argv[i + 1];
+				if (value.empty() || value[0] == '-')
+					break;
+				arg->setValue(value);
+				++i;
+			}
+		}
+		// if argument is of MultiString type
+		else if (dynamic_cast<MultiString*>(arg) != nullptr) {
+			while (i + 1 < argc) {
+				std::string value = argv[i + 1];
+				if (value.empty() || value[0] == '-')
+					break;
+				arg->setValue(value);
+				++i;
+			}
+		}
+
 		// если аргумент типа bool, то не ожидаем от него значения в командной строке
-		if (dynamic_cast<BoolArg*>(arg) != nullptr) {
+		else if (dynamic_cast<BoolArg*>(arg) != nullptr) {
 			arg->setValue("true");
 		}
 		// для остальных типов данных ожидаем значение для аргумента
