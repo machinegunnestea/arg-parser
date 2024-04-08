@@ -173,3 +173,78 @@ TEST_CASE("Parsing of arguments", "[args_parsing]") {
 		REQUIRE(arg.value() == "value");
 	}
 }
+TEST_CASE("Validation of multi arguments", "[multi_args]") {
+	args_parse::Validator validator;
+
+	SECTION("Validation of MultiInt argument values within range") {
+		args_parse::MultiInt arg('m', "multi");
+		REQUIRE(validator.validateIntRange("5", -50, 50));
+	}
+	SECTION("Validation of MultiInt argument values out of range") {
+		args_parse::MultiInt arg('m', "multi");
+		REQUIRE_FALSE(validator.validateIntRange("60", -50, 50));
+	}
+	SECTION("Validation of MultiInt argument values are not int") {
+		args_parse::MultiInt arg('m', "multi");
+		REQUIRE_FALSE(validator.validateIntRange("str", -50, 50));
+	}
+	SECTION("Validation of MultiBool argument values") {
+		args_parse::MultiBool arg('m', "multi");
+		REQUIRE(validator.validateValuePresence("true, false"));
+	}
+	SECTION("Validation of MultiString argument values") {
+		args_parse::MultiString arg('m', "multi");
+		REQUIRE(validator.validateValuePresence("value"));
+	}
+}
+TEST_CASE("Parsing multi arguments", "[multi_parse]") {
+	args_parse::ArgsParser parser;
+
+	SECTION("Parsing of MultiInt arguments") {
+		args_parse::MultiInt arg('m', "multi");
+		parser.add(&arg);
+
+		const char* argv[] = { "program", "-m", "10", "20", "30" };
+		int argc = sizeof(argv) / sizeof(argv[0]);
+
+		parser.parse(argc, argv);
+
+		const auto& values = arg.values();
+		REQUIRE(values.size() == 3);
+		REQUIRE(values[0] == 10);
+		REQUIRE(values[1] == 20);
+		REQUIRE(values[2] == 30);
+	}
+	SECTION("Parsing of MultiBool arguments") {
+		args_parse::MultiBool arg('m', "multi");
+		parser.add(&arg);
+
+		const char* argv[] = { "program", "-m", "true", "false", "true", "false" };
+		int argc = sizeof(argv) / sizeof(argv[0]);
+
+		parser.parse(argc, argv);
+
+		const auto& values = arg.values();
+		REQUIRE(values.size() == 4);
+		REQUIRE(values[0] == true);
+		REQUIRE(values[1] == false);
+		REQUIRE(values[2] == true);
+		REQUIRE(values[3] == false);
+	}
+	SECTION("Parsing of MultiString arguments") {
+		args_parse::MultiString arg('m', "multi");
+		parser.add(&arg);
+
+		const char* argv[] = { "program", "-m", "value1", "value2", "value3", "-m", "value4" };
+		int argc = sizeof(argv) / sizeof(argv[0]);
+
+		parser.parse(argc, argv);
+
+		const auto& values = arg.values();
+		REQUIRE(values.size() == 4);
+		REQUIRE(values[0] == "value1");
+		REQUIRE(values[1] == "value2");
+		REQUIRE(values[2] == "value3");
+		REQUIRE(values[3] == "value4");
+	}
+}
