@@ -103,15 +103,13 @@ namespace args_parse {
 	MultiInt::MultiInt() {}
 
 	void MultiInt::setValue(const std::string& value) {
-		int intValue;
+	
 		try {
-			intValue = std::stoi(value);
+			values_.push_back(std::stoi(value));
 		}
 		catch (const std::exception& e) {
 			std::cerr << "Error: Invalid integer value: " << e.what() << std::endl;
-			return;
 		}
-		values_.push_back(intValue);
 	}
 
 	const std::vector<int>& MultiInt::values() const {

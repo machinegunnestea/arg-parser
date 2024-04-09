@@ -116,7 +116,7 @@ TEST_CASE("Parsing of arguments", "[args_parsing]") {
 		parser.add(&arg);
 
 		const char* argv[] = { "args_parse_demo", "-b" };
-		const int argc = std::size(argv);
+		const int argc = static_cast<int>(std::size(argv));
 
 		parser.parse(argc, argv);
 		REQUIRE(arg.isDefined());
