@@ -126,7 +126,7 @@ TEST_CASE("Parsing of arguments", "[args_parsing]") {
 		parser.add(&arg);
 
 		const char* argv[] = { "args_parse_demo", "--bool" };
-		const int argc = std::size(argv);
+		const int argc = static_cast<int>(std::size(argv));
 
 		parser.parse(argc, argv);
 		REQUIRE(arg.isDefined());
@@ -136,7 +136,7 @@ TEST_CASE("Parsing of arguments", "[args_parsing]") {
 		parser.add(&arg);
 
 		const char* argv[] = { "args_parse_demo", "-s", "value" };
-		const int argc = std::size(argv);
+		const int argc = static_cast<int>(std::size(argv));
 
 		parser.parse(argc, argv);
 		REQUIRE(arg.value() == "value");
@@ -146,7 +146,7 @@ TEST_CASE("Parsing of arguments", "[args_parsing]") {
 		parser.add(&arg);
 
 		const char* argv[] = { "args_parse_demo", "--string", "value" };
-		const int argc = std::size(argv);
+		const int argc = static_cast<int>(std::size(argv));
 
 		parser.parse(argc, argv);
 		REQUIRE(arg.value() == "value");
@@ -156,20 +156,20 @@ TEST_CASE("Parsing of arguments", "[args_parsing]") {
 		parser.add(&arg);
 
 		const char* argv[] = { "args_parse_demo", "--long", "value" };
-		const int argc = std::size(argv);
+		const int argc = static_cast<int>(std::size(argv));
 
 		parser.parse(argc, argv);
 		REQUIRE_FALSE(arg.value() == "value");
 	}
-	SECTION("Parsing shortened argument with values") {
+	SECTION("Parsing shortened argument without space or equal sing") {
 		args_parse::StringArg arg('s', "string");
 		parser.add(&arg);
 
-		const char* argv[] = { "args_parse_demo", "-str", "value" };
-		const int argc = std::size(argv);
+		const char* argv[] = { "args_parse_demo", "-str" };
+		const int argc = static_cast<int>(std::size(argv));
 
 		parser.parse(argc, argv);
-		REQUIRE(arg.value() == "value");
+		REQUIRE(arg.value() == "tr");
 	}
 }
 TEST_CASE("Validation of multi arguments", "[multi_args]") {
@@ -204,7 +204,7 @@ TEST_CASE("Parsing multi arguments", "[multi_parse]") {
 		parser.add(&arg);
 
 		const char* argv[] = { "args_parse_demo", "-m", "10", "20", "30" };
-		const int argc = std::size(argv);
+		const int argc = static_cast<int>(std::size(argv));
 		//int argc = sizeof(argv) / sizeof(argv[0]);
 
 		parser.parse(argc, argv);
@@ -220,7 +220,7 @@ TEST_CASE("Parsing multi arguments", "[multi_parse]") {
 		parser.add(&arg);
 
 		const char* argv[] = { "args_parse_demo", "-m", "true", "false", "true", "false" };
-		const int argc = std::size(argv);
+		const int argc = static_cast<int>(std::size(argv));
 		//int argc = sizeof(argv) / sizeof(argv[0]);
 
 		parser.parse(argc, argv);
@@ -237,7 +237,7 @@ TEST_CASE("Parsing multi arguments", "[multi_parse]") {
 		parser.add(&arg);
 
 		const char* argv[] = { "args_parse_demo", "-m", "value1", "value2", "value3" };
-		const int argc = std::size(argv);
+		const int argc = static_cast<int>(std::size(argv));
 
 		parser.parse(argc, argv);
 
