@@ -87,29 +87,11 @@ namespace args_parse {
 		std::vector<std::string> values_;
 	};
 
-	/*
-#define ARGS_PARSER_TESTING 0
-
-#if defined(ARGS_PARSER_TESTING) && (0 != ARGS_PARSER_TESTING)
-#define ARGS_PARSER_PRIVATE_SECTION public
-#else
-#define ARGS_PARSER_PRIVATE_SECTION private
-#endif
-*/
-	namespace args_parser_testing {
-		class ArgsParserAcessor;
-	}
-
 	class ArgsParser {
-		friend class args_parser_testing::ArgsParserAcessor;
-
 	public:
 		bool add(Arg* arg);
 		void printHelp() const;
 		void parse(int argc, const char** argv);
-		
-		//ARGS_PARSER_PRIVATE_SECTION:
-
 		void executeArgument(Arg* arg, int argc, const char** argv, int& i);
 		void parseShortArgument(char shortArg, int argc, const char** argv, int& i);
 		void parseLongArgument(const std::string& longArg, int argc, const char** argv, int& i);
