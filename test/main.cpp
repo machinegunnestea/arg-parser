@@ -9,28 +9,28 @@ TEST_CASE("Validation of arguments", "[args_validation]") {
 	args_parse::Validator validator;
 
 	SECTION("Validation of new bool argument") {
-		args_parse::BoolArg arg('b', "bool");
+		args_parse::SingleArg<bool> arg('b', "bool");
 		REQUIRE(validator.validateNewArgument(&arg));
 	}
 	SECTION("Validation of new int argument") {
-		args_parse::IntArg arg('i', "int");
+		args_parse::SingleArg<int> arg('i', "int");
 		REQUIRE(validator.validateNewArgument(&arg));
 	}
 	SECTION("Validation of new string argument") {
-		args_parse::StringArg arg('s', "string");
+		args_parse::SingleArg<std::string> arg('s', "string");
 		REQUIRE(validator.validateNewArgument(&arg));
 	}
 	SECTION("Validation of null argument") {
-		args_parse::BoolArg* arg = nullptr;
+		args_parse::SingleArg<bool>* arg = nullptr;
 		REQUIRE_FALSE(validator.validateNewArgument(arg));
 	}
 	SECTION("Validation of short name not set") {
-		args_parse::BoolArg arg;
+		args_parse::SingleArg<bool> arg;
 		std::unordered_map<char, args_parse::Arg*> shortNameArgs;
 		REQUIRE_FALSE(validator.validateShortIsNotSet(&arg));
 	}
 	SECTION("Validation of long name not set") {
-		args_parse::BoolArg arg;
+		args_parse::SingleArg<bool> arg;
 		std::unordered_map<std::string, args_parse::Arg*> longNameArgs;
 		REQUIRE_FALSE(validator.validateLongIsNotSet(&arg));
 	}
@@ -40,26 +40,26 @@ TEST_CASE("Validation of duplicate arguments", "[args_dup_validation]") {
 	args_parse::Validator validator;
 
 	SECTION("Validation of short name existence") {
-		args_parse::BoolArg arg;
+		args_parse::SingleArg<bool> arg;
 		arg.setShortName('a');
 		std::unordered_map<char, args_parse::Arg*> shortNameArgs;
 		REQUIRE(validator.validateShortExists(&arg, shortNameArgs));
 	}
 	SECTION("Validation of long name existence") {
-		args_parse::BoolArg arg;
+		args_parse::SingleArg<bool> arg;
 		arg.setLongName("setLong");
 		std::unordered_map<std::string, args_parse::Arg*> longNameArgs;
 		REQUIRE(validator.validateLongExists(&arg, longNameArgs));
 	}
 	SECTION("Validation of existing short name") {
-		args_parse::BoolArg arg1, arg2;
+		args_parse::SingleArg<bool> arg1, arg2;
 		arg1.setShortName('a');
 		std::unordered_map<char, args_parse::Arg*> shortNameArgs = { {'a',&arg1} };
 		arg2.setShortName('a');
 		REQUIRE_FALSE(validator.validateShortExists(&arg2, shortNameArgs));
 	}
 	SECTION("Validation of existing long name") {
-		args_parse::BoolArg arg1, arg2;
+		args_parse::SingleArg<bool> arg1, arg2;
 		arg1.setLongName("setLong");
 		std::unordered_map<std::string, args_parse::Arg*> longNameArgs = { {"setLong",&arg1} };
 		arg2.setLongName("setLong");
@@ -112,7 +112,7 @@ TEST_CASE("Parsing of arguments", "[args_parsing]") {
 	args_parse::ArgsParser parser;
 
 	SECTION("Parsing short arguments") {
-		args_parse::BoolArg arg('b', "bool");
+		args_parse::SingleArg<bool> arg('b', "bool");
 		parser.add(&arg);
 
 		const char* argv[] = { "args_parse_demo", "-b" };
@@ -122,7 +122,7 @@ TEST_CASE("Parsing of arguments", "[args_parsing]") {
 		REQUIRE(arg.isDefined());
 	}
 	SECTION("Parsing long arguments") {
-		args_parse::BoolArg arg('b', "bool");
+		args_parse::SingleArg<bool> arg('b', "bool");
 		parser.add(&arg);
 
 		const char* argv[] = { "args_parse_demo", "--bool" };
@@ -132,7 +132,7 @@ TEST_CASE("Parsing of arguments", "[args_parsing]") {
 		REQUIRE(arg.isDefined());
 	}
 	SECTION("Parsing short arguments with values") {
-		args_parse::StringArg arg('s', "string");
+		args_parse::SingleArg<std::string> arg('s', "string");
 		parser.add(&arg);
 
 		const char* argv[] = { "args_parse_demo", "-s", "value" };
@@ -142,7 +142,7 @@ TEST_CASE("Parsing of arguments", "[args_parsing]") {
 		REQUIRE(arg.value() == "value");
 	}
 	SECTION("Parsing long arguments with values") {
-		args_parse::StringArg arg('s', "string");
+		args_parse::SingleArg<std::string> arg('s', "string");
 		parser.add(&arg);
 
 		const char* argv[] = { "args_parse_demo", "--string", "value" };
@@ -152,7 +152,7 @@ TEST_CASE("Parsing of arguments", "[args_parsing]") {
 		REQUIRE(arg.value() == "value");
 	}
 	SECTION("Parsing invalid long argument with values") {
-		args_parse::StringArg arg('s', "string");
+		args_parse::SingleArg<std::string> arg('s', "string");
 		parser.add(&arg);
 
 		const char* argv[] = { "args_parse_demo", "--long", "value" };
@@ -162,7 +162,7 @@ TEST_CASE("Parsing of arguments", "[args_parsing]") {
 		REQUIRE_FALSE(arg.value() == "value");
 	}
 	SECTION("Parsing shortened argument without space or equal sing") {
-		args_parse::StringArg arg('s', "string");
+		args_parse::SingleArg<std::string> arg('s', "string");
 		parser.add(&arg);
 
 		const char* argv[] = { "args_parse_demo", "-str" };
@@ -176,23 +176,23 @@ TEST_CASE("Validation of multi arguments", "[multi_args]") {
 	args_parse::Validator validator;
 
 	SECTION("Validation of MultiInt argument values within range") {
-		args_parse::MultiInt arg('m', "multi");
+		args_parse::MultiArg<int> arg('m', "multi");
 		REQUIRE(validator.validateIntRange("5", -50, 50));
 	}
 	SECTION("Validation of MultiInt argument values out of range") {
-		args_parse::MultiInt arg('m', "multi");
+		args_parse::MultiArg<int> arg('m', "multi");
 		REQUIRE_FALSE(validator.validateIntRange("60", -50, 50));
 	}
 	SECTION("Validation of MultiInt argument values are not int") {
-		args_parse::MultiInt arg('m', "multi");
+		args_parse::MultiArg<int> arg('m', "multi");
 		REQUIRE_FALSE(validator.validateIntRange("str", -50, 50));
 	}
 	SECTION("Validation of MultiBool argument values") {
-		args_parse::MultiBool arg('m', "multi");
+		args_parse::MultiArg<bool> arg('m', "multi");
 		REQUIRE(validator.validateValuePresence("true, false"));
 	}
 	SECTION("Validation of MultiString argument values") {
-		args_parse::MultiString arg('m', "multi");
+		args_parse::MultiArg<std::string> arg('m', "multi");
 		REQUIRE(validator.validateValuePresence("value"));
 	}
 }
@@ -200,7 +200,7 @@ TEST_CASE("Parsing multi arguments", "[multi_parse]") {
 	args_parse::ArgsParser parser;
 
 	SECTION("Parsing of MultiInt arguments") {
-		args_parse::MultiInt arg('m', "multi");
+		args_parse::MultiArg<int> arg('m', "multi");
 		parser.add(&arg);
 
 		const char* argv[] = { "args_parse_demo", "-m", "10", "20", "30" };
@@ -216,7 +216,7 @@ TEST_CASE("Parsing multi arguments", "[multi_parse]") {
 		REQUIRE(values[2] == 30);
 	}
 	SECTION("Parsing of MultiBool arguments") {
-		args_parse::MultiBool arg('m', "multi");
+		args_parse::MultiArg<bool> arg('m', "multi");
 		parser.add(&arg);
 
 		const char* argv[] = { "args_parse_demo", "-m", "true", "false", "true", "false" };
@@ -233,7 +233,7 @@ TEST_CASE("Parsing multi arguments", "[multi_parse]") {
 		REQUIRE(values[3] == false);
 	}
 	SECTION("Parsing of MultiString arguments") {
-		args_parse::MultiString arg('m', "multi");
+		args_parse::MultiArg<std::string> arg('m', "multi");
 		parser.add(&arg);
 
 		const char* argv[] = { "args_parse_demo", "-m", "value1", "value2", "value3" };

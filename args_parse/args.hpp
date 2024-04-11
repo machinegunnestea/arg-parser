@@ -1,115 +1,144 @@
-#pragma once
+﻿#pragma once
 
 #include <string>
 #include <unordered_map>
+#include <iostream>
 
 namespace args_parse {
 	class Arg {
 	public:
+		// конструктор для короткого и длинного имени аргумента
+		Arg(char shortName, const std::string& longName) : shortName_(shortName), longName_(longName) {}
+		// конструктор для длинного имени аргумента
+		Arg(const std::string& longName) : shortName_('\0'), longName_(longName) {}
+		// без параметров
 		Arg() : shortName_('\0') {}
 
+		//методы для установки и получения короткого и длинного имени аргумента
 		void setShortName(char shortName);
 		void setLongName(const std::string& longName);
-
 		char shortName() const;
 		const std::string& longName() const;
 
+		//виртуальный метод для установки значения аргумента
 		virtual void setValue(const std::string& value) = 0;
+
+		//методы для установки и получения описания аргумента
+		std::string GetDescription() const { return description_; }
+		void SetDescription(const std::string& description) { description_ = description; }
 
 	private:
 		char shortName_;
 		std::string longName_;
+		std::string description_;
 	};
 
-	class BoolArg : public Arg {
+	template<typename T>
+	class SingleArg : public Arg {
 	public:
-		BoolArg();
-		BoolArg(char shortName, const std::string& longName);
-		void setValue(const std::string& value) override;
-		bool isDefined() const;
+		SingleArg(char shortName, const std::string& longName) : Arg(shortName, longName) {}
+		SingleArg(const std::string& longName) : Arg(longName) {}
+		SingleArg() {}
+
+		// метод для установки значения аргумента
+		void setValue(const std::string& value) override {
+			if constexpr (std::is_same_v<T, std::string>) {
+				value_ = value;
+				defined_ = true;
+			}
+			else if constexpr (std::is_same_v<T, int>) {
+				try {
+					value_ = std::stoi(value);
+					defined_ = true;
+				}
+				catch (...) {
+					std::cerr << "Error: Invalid integer value: " << value << std::endl;
+				}
+			}
+			else if constexpr (std::is_same_v<T, float>) {
+				try {
+					value_ = std::stof(value);
+					defined_ = true;
+				}
+				catch (...) {
+					std::cerr << "Error: Invalid float value: " << value << std::endl;
+				}
+			}
+			else if constexpr (std::is_same_v<T, bool>) {
+				// Handle boolean value (e.g., 'true', 'false')
+				if (value == "true" || value == "1")
+					value_ = true;
+				else if (value == "false" || value == "0")
+					value_ = false;
+				else
+					std::cerr << "Error: Invalid boolean value: " << value << std::endl;
+				defined_ = true;
+			}
+		}
+
+		// метод для получения значения аргумента
+		const T& value() const { return value_; }
+		// метод для проверки определенности аргумента
+		bool isDefined() const { return defined_; }
 
 	private:
-		bool value_;
+		T value_;
+		bool defined_ = false;
 	};
 
-	class StringArg : public Arg {
+	template<typename T>
+	class MultiArg : public Arg {
 	public:
-		StringArg();
-		StringArg(char shortName, const std::string& longName);
-		void setValue(const std::string& value) override;
-		const std::string& value() const;
+		MultiArg(char shortName, const std::string& longName) : Arg(shortName, longName) {}
+		MultiArg(const std::string& longName) : Arg(longName) {}
+		MultiArg() {}
+
+		// метод для установки значения аргумента
+		void setValue(const std::string& value) override {
+			if constexpr (std::is_same_v<T, std::string>) {
+				values_.push_back(value);
+			}
+			else if constexpr (std::is_same_v<T, int>) {
+				try {
+					values_.push_back(std::stoi(value));
+				}
+				catch (...) {
+					std::cerr << "Error: Invalid integer value: " << value << std::endl;
+				}
+			}
+			else if constexpr (std::is_same_v<T, float>) {
+				try {
+					values_.push_back(std::stof(value));
+				}
+				catch (...) {
+					std::cerr << "Error: Invalid float value: " << value << std::endl;
+				}
+			}
+			else if constexpr (std::is_same_v<T, bool>) {
+				// Handle boolean value (e.g., 'true', 'false')
+				if (value == "true" || value == "1")
+					values_.push_back(true);
+				else if (value == "false" || value == "0")
+					values_.push_back(false);
+				else
+					std::cerr << "Error: Invalid boolean value: " << value << std::endl;
+			}
+		}
+
+		// метод для получения значения аргумента
+		const std::vector<T>& values() const { return values_; }
+		// метод для проверки определенности аргумента
+		bool isDefined() const { return !values_.empty(); }
 
 	private:
-		std::string value_;
+		std::vector<T> values_;
 	};
-	class IntArg : public Arg {
-	public:
-		IntArg();
-		IntArg(char shortName, const std::string& longName);
-		void setValue(const std::string& value) override;
-		int value() const;
-		bool isDefined() const;
-
-	private:
-		int value_;
-	};
-
-	class MultiInt : public Arg {
-	public:
-		MultiInt(char shortName, const std::string& longName);
-		MultiInt();
-		void setValue(const std::string& value) override;
-		const std::vector<int>& values() const;
-		bool isDefined() const;
-	private:
-		std::vector<int> values_;
-	};
-
-	class MultiBool : public Arg {
-	public:
-		MultiBool(char shortName, const std::string& longName);
-		MultiBool();
-		void setValue(const std::string& value) override;
-		const std::vector<bool>& values() const;
-		bool isDefined() const;
-	private:
-		std::vector<bool> values_;
-	};
-
-	class MultiString : public Arg {
-	public:
-		MultiString(char shortName, const std::string& longName);
-		MultiString();
-		void setValue(const std::string& value) override;
-		const std::vector<std::string>& values() const;
-		bool isDefined() const;
-	private:
-		std::vector<std::string> values_;
-	};
-
-	/*
-#define ARGS_PARSER_TESTING 0
-
-#if defined(ARGS_PARSER_TESTING) && (0 != ARGS_PARSER_TESTING)
-#define ARGS_PARSER_PRIVATE_SECTION public
-#else
-#define ARGS_PARSER_PRIVATE_SECTION private
-#endif
-*/
-	namespace args_parser_testing {
-		class ArgsParserAcessor;
-	}
 
 	class ArgsParser {
-		friend class args_parser_testing::ArgsParserAcessor;
-
 	public:
 		bool add(Arg* arg);
 		void printHelp() const;
 		void parse(int argc, const char** argv);
-		
-		//ARGS_PARSER_PRIVATE_SECTION:
-
 		void executeArgument(Arg* arg, int argc, const char** argv, int& i);
 		void parseShortArgument(char shortArg, int argc, const char** argv, int& i);
 		void parseLongArgument(const std::string& longArg, int argc, const char** argv, int& i);

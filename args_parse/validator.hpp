@@ -15,7 +15,8 @@ namespace args_parse {
 		static bool validateLongIsNotSet(const Arg* arg);
 		static bool validateLongExists(const Arg* arg, const std::unordered_map<std::string, Arg*>& longNameArgs_);
 
-		static bool validateIntRange(const std::string& value, int leftBorder, int rightBorder);
+		static bool validateInt(const std::string& value);
+		static bool validateFloat(const std::string& value);
 		static bool validateStringLength(const std::string& value, size_t maxLength);
 	};
 }

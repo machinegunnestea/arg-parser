@@ -59,8 +59,8 @@ namespace args_parse {
 		return true;
 	}
 
-	// проверка: у аргумента существует значение, оно целочисленное и находится в заданном диапазоне
-	bool Validator::validateIntRange(const std::string& value, int leftBorder, int rightBorder) {
+	// проверка: у аргумента существует значение, оно целочисленное
+	bool Validator::validateInt(const std::string& value) {
 		int intValue;
 		// проверка целочисленности
 		try {
@@ -70,19 +70,21 @@ namespace args_parse {
 			std::cerr << "Error: Invalid integer value:" << e.what() << std::endl;
 			return false;
 		}
-		// проверка принадлежности диапазону
-		if (intValue < leftBorder || intValue > rightBorder) {
-			std::cerr << "Error: Integer value out of range ("
-				<< leftBorder
-				<< ";"
-				<< rightBorder
-				<< ")."
-				<< std::endl;
+		return true;
+	}
+	// проверка: у аргумента существует значение, оно c плавающей запятой
+	bool Validator::validateFloat(const std::string& value) {
+		int intValue;
+		// проверка целочисленности
+		try {
+			intValue = std::stof(value);
+		}
+		catch (const std::exception& e) {
+			std::cerr << "Error: Invalid float value:" << e.what() << std::endl;
 			return false;
 		}
 		return true;
 	}
-
 	// проверка: у аргумента существует значение, оно строковое и его длина не превышает установленного максимума
 	bool Validator::validateStringLength(const std::string& value, size_t maxLength) {
 		if (value.length() > maxLength) {

@@ -3,6 +3,16 @@
 #include <iostream>
 
 namespace args_parse {
+	// возвращаем имя короткого аргумента
+	char Arg::shortName() const {
+		return shortName_;
+	}
+
+	// возвращаем имя длинного аргумента
+	const std::string& Arg::longName() const {
+		return longName_;
+	}
+
 	// установка короткого имени аргумента
 	void Arg::setShortName(char shortName) {
 		shortName_ = shortName;
@@ -13,164 +23,11 @@ namespace args_parse {
 		longName_ = longName;
 	}
 
-	// возвращаем имя короткого аргумента
-	char Arg::shortName() const {
-		return shortName_;
-	}
-
-	// возвращаем имя длинного аргумента
-	const std::string& Arg::longName() const {
-		return longName_;
-	}
-	// конструктор с параметрами для типа bool
-	BoolArg::BoolArg(char shortName, const std::string& longName) : value_(false) {
-		setShortName(shortName);
-		setLongName(longName);
-	}
-
-	// конструктор без параметров для типа bool
-	BoolArg::BoolArg() : value_(false) {}
-
-	// установка значения для bool
-	void BoolArg::setValue(const std::string& value) {
-		if (value != "false") {
-			value_ = true;
-		}
-	}
-
-	// проверка установлено ли значение для bool
-	bool BoolArg::isDefined() const {
-		return value_;
-	}
-
-	// конструктор с параметрами для типа string
-	StringArg::StringArg(char shortName, const std::string& longName) {
-		setShortName(shortName);
-		setLongName(longName);
-	}
-
-	// конструктор без параметров для типа string
-	StringArg::StringArg() {}
-
-	// установка значения для string
-	// метод ожидает значение для аргумента и максимально допустимую длину
-	void StringArg::setValue(const std::string& value) {
-		int maxLength = 25;
-		if (Validator::validateValuePresence(value) && Validator::validateStringLength(value, maxLength)) {
-			value_ = value;
-		}
-	}
-
-	// возвращаем значение аргумента string
-	const std::string& StringArg::value() const {
-		return value_;
-	}
-
-	// конструктор с параметрами для типа int
-	IntArg::IntArg(char shortName, const std::string& longName) {
-		setShortName(shortName);
-		setLongName(longName);
-	}
-
-	// конструктор без параметров для типа int
-	IntArg::IntArg() {}
-
-	// установка значения для int
-	// метод ожидает значение для аргумента, левую и правую границы допустимых значений
-	void IntArg::setValue(const std::string& value) {
-		int left = -127;
-		int right = 128;
-		if (Validator::validateValuePresence(value) && Validator::validateIntRange(value, left, right)) {
-			value_ = std::stoi(value);
-		}
-	}
-	// возвращаем значение аргумента int
-	int IntArg::value() const {
-		return value_;
-	}
-
-	// проверка установлено ли значение для int
-	bool IntArg::isDefined() const {
-		return value_;
-	}
-
-	// MultiInt implementation
-	MultiInt::MultiInt(char shortName, const std::string& longName) {
-		setShortName(shortName);
-		setLongName(longName);
-	}
-
-	MultiInt::MultiInt() {}
-
-	void MultiInt::setValue(const std::string& value) {
-	
-		try {
-			values_.push_back(std::stoi(value));
-		}
-		catch (const std::exception& e) {
-			std::cerr << "Error: Invalid integer value: " << e.what() << std::endl;
-		}
-	}
-
-	const std::vector<int>& MultiInt::values() const {
-		return values_;
-	}
-
-	bool MultiInt::isDefined() const {
-		return !values_.empty();
-	}
-
-	// MultiBool implementation
-	MultiBool::MultiBool(char shortName, const std::string& longName) {
-		setShortName(shortName);
-		setLongName(longName);
-	}
-
-	MultiBool::MultiBool() {}
-
-	void MultiBool::setValue(const std::string& value) {
-		bool boolValue = (value != "false");
-		values_.push_back(boolValue);
-	}
-
-	const std::vector<bool>& MultiBool::values() const {
-		return values_;
-	}
-
-	bool MultiBool::isDefined() const {
-		return !values_.empty();
-	}
-
-	// MultiString implementation
-	MultiString::MultiString(char shortName, const std::string& longName) {
-		setShortName(shortName);
-		setLongName(longName);
-	}
-
-	MultiString::MultiString() {}
-
-	void MultiString::setValue(const std::string& value) {
-		values_.push_back(value);
-	}
-
-	const std::vector<std::string>& MultiString::values() const {
-		return values_;
-	}
-
-	bool MultiString::isDefined() const {
-		return !values_.empty();
-	}
-
 	// добавление аргумента в парсер
 	bool ArgsParser::add(Arg* arg) {
 		// проверка: имя у аргумента не пустое
 		if (!Validator::validateNewArgument(arg))
 			return false;
-
-		//if (!Validator::validateShortIsNotSet(arg))
-		//	return false;
-		//if (!Validator::validateLongIsNotSet(arg))
-		//	return false;
 
 		// проверка: короткое имя у аргумента не дублирует имена существующих
 		if (!Validator::validateShortExists(arg, shortNameArgs_))
@@ -194,9 +51,9 @@ namespace args_parse {
 
 	// вывести справку
 	void ArgsParser::printHelp() const {
-		std::cout << "Usage:\t[options]" << std::endl;
+		std::cout << "Usage:\t[options]\t[description]" << std::endl;
 		for (const auto& pair : longNameArgs_) {
-			std::cout << "  -" << pair.second->shortName() << ", --" << pair.first << std::endl;
+			std::cout << "  -" << pair.second->shortName() << ", --" << pair.first << "    " << pair.second->GetDescription() << std::endl;
 		}
 	}
 
@@ -255,6 +112,7 @@ namespace args_parse {
 		}
 	}
 
+	// обработать короткие  аргументы со знаком равно
 	void ArgsParser::parseShortArgumentEquals(char shortName, const std::string& value) {
 		auto iter = shortNameArgs_.find(shortName);
 		if (iter != shortNameArgs_.end()) {
@@ -275,7 +133,7 @@ namespace args_parse {
 			std::cerr << "Error: Unknown argument '--" << longName << "'" << std::endl;
 		}
 	}
-
+	// обработать длинные аргументы со знаком равно
 	void ArgsParser::parseLongArgumentEquals(const std::string& longName, const std::string& value) {
 		auto iter = longNameArgs_.find(longName);
 		if (iter != longNameArgs_.end()) {
@@ -288,43 +146,59 @@ namespace args_parse {
 
 	// добавить значения к аргументам
 	void ArgsParser::executeArgument(Arg* arg, int argc, const char** argv, int& i) {
-		// if argument is of MultiInt type
-		if (dynamic_cast<MultiInt*>(arg) != nullptr) {
+		if (dynamic_cast<MultiArg<int>*>(arg) != nullptr) {
 			while (i + 1 < argc) {
 				std::string value = argv[i + 1];
 				if (value.empty() || value[0] == '-')
 					break;
-				if (!Validator::validateIntRange(value, -50, 50)) {
-					std::cerr << "Error: Invalid integer value: " << value << std::endl;
+				if (!Validator::validateInt(value)) {
 					break;
 				}
 				arg->setValue(value);
 				++i;
 			}
 		}
-		// if argument is of MultiBool type
-		else if (dynamic_cast<MultiBool*>(arg) != nullptr) {
+		else if (dynamic_cast<MultiArg<std::string>*>(arg) != nullptr) {
 			while (i + 1 < argc) {
 				std::string value = argv[i + 1];
 				if (value.empty() || value[0] == '-')
 					break;
+				if (!Validator::validateStringLength(value, 50)) {
+					break;
+				}
 				arg->setValue(value);
 				++i;
 			}
 		}
-		// if argument is of MultiString type
-		else if (dynamic_cast<MultiString*>(arg) != nullptr) {
+		else if (dynamic_cast<MultiArg<bool>*>(arg) != nullptr) {
 			while (i + 1 < argc) {
 				std::string value = argv[i + 1];
 				if (value.empty() || value[0] == '-')
 					break;
+				if (value == "true" || value == "false") {
+					arg->setValue(value);
+				}
+				else {
+					break;
+				}
 				arg->setValue(value);
 				++i;
 			}
 		}
-
+		else if (dynamic_cast<MultiArg<float>*>(arg) != nullptr) {
+			while (i + 1 < argc) {
+				std::string value = argv[i + 1];
+				if (value.empty() || value[0] == '-')
+					break;
+				if (!std::stof(value)) {
+					break;
+				}
+				arg->setValue(value);
+				++i;
+			}
+		}
 		// если аргумент типа bool, то не ожидаем от него значения в командной строке
-		else if (dynamic_cast<BoolArg*>(arg) != nullptr) {
+		else if (dynamic_cast<SingleArg<bool>*>(arg) != nullptr) {
 			arg->setValue("true");
 		}
 		// для остальных типов данных ожидаем значение для аргумента
@@ -339,7 +213,7 @@ namespace args_parse {
 	}
 	void ArgsParser::executeEquals(Arg* arg, const std::string& value) {
 		// Если аргумент типа BoolArg, не ожидается значение
-		if (dynamic_cast<BoolArg*>(arg) != nullptr) {
+		if (dynamic_cast<SingleArg<bool>*>(arg) != nullptr) {
 			arg->setValue("true");
 		}
 		// Для остальных типов данных ожидается значение аргумента

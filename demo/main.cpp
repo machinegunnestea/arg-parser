@@ -5,26 +5,40 @@ int main(int argc, const char** argv) {
 	args_parse::ArgsParser parser;
 
 	// Define arguments
-	args_parse::BoolArg help('h', "help");
-	args_parse::IntArg number('g', "getNumber");
-	args_parse::StringArg output('o', "output");
+	args_parse::SingleArg<bool> help('h', "help");
+	args_parse::SingleArg<int> number('g', "getNumber");
+	args_parse::SingleArg<std::string> output('o', "output");
+	args_parse::SingleArg<float> flo('f', "float");
 
-	args_parse::MultiInt multiInt('a', "age");
-	args_parse::MultiString multiString('s', "str");
-	args_parse::MultiBool multiBool('b', "bool");
+	help.SetDescription("single bool argument shows the list of the arguments");
+	number.SetDescription("single int argument shows Input g value [int]");
+	output.SetDescription("single string argument shows Output o value [string]");
+	flo.SetDescription("single float argument shows Input f value [float]");
+
+	args_parse::MultiArg<int> multiInt('a', "age");
+	args_parse::MultiArg<std::string> multiString('s', "str");
+	args_parse::MultiArg<bool> multiBool('b', "bool");
+	args_parse::MultiArg<float> multiFlo('m', "mflo");
+
+	multiBool.SetDescription("multiple bool argument shows Input multi bool values: [bool] [bool] [bool]...");
+	multiInt.SetDescription("multiple int argument shows Input g value [int] [int] [int]...");
+	multiString.SetDescription("multiple string argument shows Output o value [string] [string] [string]...");
+	multiFlo.SetDescription("multiple float argument shows Input f value [float] [float] [float]...");
 
 	// Add arguments to parser
 	parser.add(&help);
 	parser.add(&number);
 	parser.add(&output);
+	parser.add(&flo);
 
 	parser.add(&multiInt);
 	parser.add(&multiString);
 	parser.add(&multiBool);
+	parser.add(&multiFlo);
 
 	// Parse arguments
 	parser.parse(argc, argv);
-	//parser.printHelp();
+	parser.printHelp();
 
 	//if help was activated
 	if (help.isDefined()) {
@@ -38,9 +52,20 @@ int main(int argc, const char** argv) {
 	if (number.isDefined()) {
 		std::cout << "Input g value: " << number.value() << std::endl;
 	}
+	// if float was activated
+	if (flo.isDefined()) {
+		std::cout << "Input f value: " << number.value() << std::endl;
+	}
 	if (multiInt.isDefined()) {
 		std::cout << "Input multi int values: ";
 		for (const auto& val : multiInt.values()) {
+			std::cout << val << " ";
+		}
+		std::cout << std::endl;
+	}
+	if (multiFlo.isDefined()) {
+		std::cout << "Input multi float values: ";
+		for (const auto& val : multiFlo.values()) {
 			std::cout << val << " ";
 		}
 		std::cout << std::endl;
