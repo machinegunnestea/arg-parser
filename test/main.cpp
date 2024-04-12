@@ -78,17 +78,13 @@ TEST_CASE("Validation of argument values", "[args_value_validation]") {
 		std::string value = "";
 		REQUIRE_FALSE(validator.validateValuePresence(value));
 	}
-	SECTION("Validation of int range") {
+	SECTION("Validation of int") {
 		std::string value = "12";
-		int left = 0;
-		int right = 15;
-		REQUIRE(validator.validateIntRange(value, left, right));
+		REQUIRE(validator.validateInt(value));
 	}
-	SECTION("Validation of int out of range") {
-		std::string value = "16";
-		int left = 0;
-		int right = 15;
-		REQUIRE_FALSE(validator.validateIntRange(value, left, right));
+	SECTION("Validation of float") {
+		std::string value = "16.2";
+		REQUIRE(validator.validateFloat(value));
 	}
 	SECTION("Validation of string length") {
 		std::string value = "12345678";
@@ -102,9 +98,11 @@ TEST_CASE("Validation of argument values", "[args_value_validation]") {
 	}
 	SECTION("Validation of int not being an int") {
 		std::string value = "t";
-		int left = 0;
-		int right = 15;
-		REQUIRE_FALSE(validator.validateIntRange(value, left, right));
+		REQUIRE_FALSE(validator.validateInt(value));
+	}
+	SECTION("Validation of float not being an int") {
+		std::string value = "t";
+		REQUIRE_FALSE(validator.validateFloat(value));
 	}
 }
 
@@ -177,15 +175,15 @@ TEST_CASE("Validation of multi arguments", "[multi_args]") {
 
 	SECTION("Validation of MultiInt argument values within range") {
 		args_parse::MultiArg<int> arg('m', "multi");
-		REQUIRE(validator.validateIntRange("5", -50, 50));
-	}
-	SECTION("Validation of MultiInt argument values out of range") {
-		args_parse::MultiArg<int> arg('m', "multi");
-		REQUIRE_FALSE(validator.validateIntRange("60", -50, 50));
+		REQUIRE(validator.validateInt("5"));
 	}
 	SECTION("Validation of MultiInt argument values are not int") {
 		args_parse::MultiArg<int> arg('m', "multi");
-		REQUIRE_FALSE(validator.validateIntRange("str", -50, 50));
+		REQUIRE_FALSE(validator.validateInt("str"));
+	}
+	SECTION("Validation of MultiFloat argument values are not int") {
+		args_parse::MultiArg<float> arg('m', "multi");
+		REQUIRE_FALSE(validator.validateFloat("str"));
 	}
 	SECTION("Validation of MultiBool argument values") {
 		args_parse::MultiArg<bool> arg('m', "multi");
@@ -205,7 +203,6 @@ TEST_CASE("Parsing multi arguments", "[multi_parse]") {
 
 		const char* argv[] = { "args_parse_demo", "-m", "10", "20", "30" };
 		const int argc = static_cast<int>(std::size(argv));
-		//int argc = sizeof(argv) / sizeof(argv[0]);
 
 		parser.parse(argc, argv);
 
