@@ -3,6 +3,8 @@
 #include <string>
 #include <unordered_map>
 #include <iostream>
+#include <chrono>
+#include <sstream>
 
 namespace args_parse {
 	class Arg {
@@ -150,4 +152,52 @@ namespace args_parse {
 		std::unordered_map<char, Arg*> shortNameArgs_;
 		std::unordered_map<std::string, Arg*> longNameArgs_;
 	};
+
+	class UserChrono {
+		std::chrono::microseconds m_;
+	public:
+		UserChrono() = default;
+		UserChrono(std::chrono::microseconds m_) : m_{ m_ } {}
+		std::chrono::microseconds GetMicroseconds() const { return m_; }
+	};
+
+	template<typename T>
+	std::enable_if_t<std::is_same_v<T, UserChrono>, bool>
+		ParseUserChrono(UserChrono& userChrono, const std::string& operand) {
+		std::stringstream ss{ operand.data() };
+
+		long long value;
+		std::string type;
+
+		ss >> value >> type;
+
+		if (!ss || ss.rdbuf()->in_avail() != 0)
+			return false;
+
+		std::chrono::microseconds user;
+
+		switch (type) {
+		case 'h':
+			user = std::chrono::hours(value);
+			break;
+		case 'm':
+			user = std::chrono::minutes(value);
+			break;
+		case 's':
+			user = std::chrono::seconds(value);
+			break;
+		case 'ms':
+			user = std::chrono::milliseconds(value);
+			break;
+		case 'ns':
+			user = std::chrono::nanoseconds(value);
+			break;
+		default:
+			return false;
+		}
+
+		userChrono = UserChrono{ user };
+
+		rerurn true;
+	}
 } // namespace args_parse

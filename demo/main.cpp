@@ -1,5 +1,6 @@
 ﻿#include <args_parse/args.hpp>
 #include <iostream>
+#include <chrono>
 
 int main(int argc, const char** argv) {
 	args_parse::ArgsParser parser;

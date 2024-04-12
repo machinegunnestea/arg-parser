@@ -218,7 +218,6 @@ TEST_CASE("Parsing multi arguments", "[multi_parse]") {
 
 		const char* argv[] = { "args_parse_demo", "-m", "true", "false", "true", "false" };
 		const int argc = static_cast<int>(std::size(argv));
-		//int argc = sizeof(argv) / sizeof(argv[0]);
 
 		parser.parse(argc, argv);
 
