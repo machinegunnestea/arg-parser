@@ -3,6 +3,8 @@
 #include <string>
 #include <unordered_map>
 #include <iostream>
+#include <chrono>
+#include <sstream>
 
 namespace args_parse {
 	class Arg {
@@ -33,6 +35,67 @@ namespace args_parse {
 		std::string description_;
 	};
 
+	// пользовательский класс для подсчета времени
+	class UserChrono {
+		std::chrono::microseconds m_;
+	public:
+		UserChrono() = default;
+		UserChrono(std::chrono::microseconds m_) : m_{ m_ } {}
+		std::chrono::microseconds GetMicroseconds() const { return m_; }
+
+		// шаблон функции для парсинга пользовательского времени из строки [number][measure]
+		template<typename T>
+		friend std::enable_if_t<std::is_same_v<T, UserChrono>, bool>
+			ParseUserChrono(UserChrono& userChrono, const std::string& operand);
+	};
+
+	// ожидает операнд в виде [число][единица измерения], например 12s, 12d, 12m
+	// конвертирует в микросекунды
+	template<typename T>
+	std::enable_if_t<std::is_same_v<T, UserChrono>, bool>
+		ParseUserChrono(UserChrono& userChrono, const std::string& operand) {
+		//std::stringstream ss{ operand.data() };
+		if (operand.size() < 2) // Ensure operand has at least two characters
+			return false;
+
+		long long value;
+		char type = operand.back();
+		std::string valueStr = operand.substr(0, operand.size() - 1);
+		std::stringstream ss{ valueStr.data() };
+
+		ss >> value;
+
+		if (!ss || ss.rdbuf()->in_avail() != 0)
+			return false;
+
+		std::chrono::microseconds user;
+
+		switch (type) {
+		case 'd':
+			user = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::hours(value * 24));
+			break;
+		case 'h':
+			user = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::hours(value));
+			break;
+		case 's':
+			user = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::seconds(value));
+			break;
+		case 'm':
+			user = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::milliseconds(value));
+			break;
+		case 'n':
+			user = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::nanoseconds(value));
+			break;
+		default:
+			return false;
+		}
+
+		userChrono = UserChrono{ user };
+
+		return true;
+	}
+
+	// Шаблон класса для аргумента с единственным значением
 	template<typename T>
 	class SingleArg : public Arg {
 	public:
@@ -74,6 +137,12 @@ namespace args_parse {
 					std::cerr << "Error: Invalid boolean value: " << value << std::endl;
 				defined_ = true;
 			}
+			if constexpr (std::is_same_v<T, UserChrono>) {
+				if (!ParseUserChrono<T>(value_, value)) {
+					std::cerr << "Error: Invalid UserChrono value: " << value << std::endl;
+				}
+				defined_ = true;
+			}
 		}
 
 		// метод для получения значения аргумента
@@ -86,6 +155,7 @@ namespace args_parse {
 		bool defined_ = false;
 	};
 
+	// Шаблон класса для аргумента с множественным значением
 	template<typename T>
 	class MultiArg : public Arg {
 	public:
@@ -136,14 +206,23 @@ namespace args_parse {
 
 	class ArgsParser {
 	public:
+		// добавление аргумента
 		bool add(Arg* arg);
+		//вывод справки о доступных аргументах
 		void printHelp() const;
+		// обработка командной строки
 		void parse(int argc, const char** argv);
+		// вспомогательный метод для parse для добавление значений к аргументам
 		void executeArgument(Arg* arg, int argc, const char** argv, int& i);
+		// вспомогательный метод для parse для обработки короткого названия аргумента
 		void parseShortArgument(char shortArg, int argc, const char** argv, int& i);
+		// вспомогательный метод для parse для обработки длинного названия аргумента
 		void parseLongArgument(const std::string& longArg, int argc, const char** argv, int& i);
+		// вспомогательный метод для parse для обработки короткого названия аргумента со знаком равно
 		void parseShortArgumentEquals(char shortName, const std::string& value);
+		// вспомогательный метод для parse для обработки длинного названия аргумента со знаком равно
 		void parseLongArgumentEquals(const std::string& longName, const std::string& value);
+		// вспомогательный метод для parse для добавление значений к аргументам со знаком равно
 		void executeEquals(Arg* arg, const std::string& value);
 
 	private:
