@@ -23,7 +23,7 @@ namespace args_parse {
 		const std::string& longName() const;
 
 		//виртуальный метод для установки значения аргумента
-		virtual void setValue(const std::string& value) = 0;
+		virtual void setValue(const std::string_view& value) = 0;
 
 		//методы для установки и получения описания аргумента
 		std::string GetDescription() const { return description_; }
@@ -44,16 +44,12 @@ namespace args_parse {
 		std::chrono::microseconds GetMicroseconds() const { return m_; }
 
 		// шаблон функции для парсинга пользовательского времени из строки [number][measure]
-		template<typename T>
-		friend std::enable_if_t<std::is_same_v<T, UserChrono>, bool>
-			ParseUserChrono(UserChrono& userChrono, const std::string& operand);
+		bool ParseUserChrono(UserChrono& userChrono, const std::string& operand);
 	};
 
 	// ожидает операнд в виде [число][единица измерения], например 12s, 12d, 12m
 	// конвертирует в микросекунды
-	template<typename T>
-	std::enable_if_t<std::is_same_v<T, UserChrono>, bool>
-		ParseUserChrono(UserChrono& userChrono, const std::string& operand) {
+	inline bool ParseUserChrono(UserChrono& userChrono, const std::string& operand) {
 		//std::stringstream ss{ operand.data() };
 		if (operand.size() < 2) // Ensure operand has at least two characters
 			return false;
@@ -99,19 +95,20 @@ namespace args_parse {
 	template<typename T>
 	class SingleArg : public Arg {
 	public:
-		SingleArg(char shortName, const std::string& longName) : Arg(shortName, longName) {}
-		SingleArg(const std::string& longName) : Arg(longName) {}
+		SingleArg(char shortName, const std::string& longName) : Arg(shortName, std::move(longName)) {}
+		SingleArg(const std::string& longName) : Arg(std::move(longName)) {}
 		SingleArg() {}
 
+		// ref to template function
 		// метод для установки значения аргумента
-		void setValue(const std::string& value) override {
-			if constexpr (std::is_same_v<T, std::string>) {
+		void setValue(const std::string_view& value) override {
+			if constexpr (std::is_same_v<T, std::string_view>) {
 				value_ = value;
 				defined_ = true;
 			}
 			else if constexpr (std::is_same_v<T, int>) {
 				try {
-					value_ = std::stoi(value);
+					value_ = std::stoi(std::string(value));
 					defined_ = true;
 				}
 				catch (...) {
@@ -120,7 +117,7 @@ namespace args_parse {
 			}
 			else if constexpr (std::is_same_v<T, float>) {
 				try {
-					value_ = std::stof(value);
+					value_ = std::stof(std::string(value));
 					defined_ = true;
 				}
 				catch (...) {
@@ -138,7 +135,7 @@ namespace args_parse {
 				defined_ = true;
 			}
 			if constexpr (std::is_same_v<T, UserChrono>) {
-				if (!ParseUserChrono<T>(value_, value)) {
+				if (!ParseUserChrono(value_, std::string(value))) {
 					std::cerr << "Error: Invalid UserChrono value: " << value << std::endl;
 				}
 				defined_ = true;
@@ -159,18 +156,19 @@ namespace args_parse {
 	template<typename T>
 	class MultiArg : public Arg {
 	public:
-		MultiArg(char shortName, const std::string& longName) : Arg(shortName, longName) {}
-		MultiArg(const std::string& longName) : Arg(longName) {}
+		MultiArg(char shortName, const std::string& longName) : Arg(shortName, std::move(longName)) {}
+		MultiArg(const std::string& longName) : Arg(std::move(longName)) {}
 		MultiArg() {}
 
+		//ref to template
 		// метод для установки значения аргумента
-		void setValue(const std::string& value) override {
+		void setValue(const std::string_view& value) override {
 			if constexpr (std::is_same_v<T, std::string>) {
-				values_.push_back(value);
+				values_.push_back(std::string(value));
 			}
 			else if constexpr (std::is_same_v<T, int>) {
 				try {
-					values_.push_back(std::stoi(value));
+					values_.push_back(std::stoi(std::string(value)));
 				}
 				catch (...) {
 					std::cerr << "Error: Invalid integer value: " << value << std::endl;
@@ -178,7 +176,7 @@ namespace args_parse {
 			}
 			else if constexpr (std::is_same_v<T, float>) {
 				try {
-					values_.push_back(std::stof(value));
+					values_.push_back(std::stof(std::string(value)));
 				}
 				catch (...) {
 					std::cerr << "Error: Invalid float value: " << value << std::endl;
@@ -217,16 +215,16 @@ namespace args_parse {
 		// вспомогательный метод для parse для обработки короткого названия аргумента
 		void parseShortArgument(char shortArg, int argc, const char** argv, int& i);
 		// вспомогательный метод для parse для обработки длинного названия аргумента
-		void parseLongArgument(const std::string& longArg, int argc, const char** argv, int& i);
+		void parseLongArgument(const std::string_view& longArg, int argc, const char** argv, int& i);
 		// вспомогательный метод для parse для обработки короткого названия аргумента со знаком равно
-		void parseShortArgumentEquals(char shortName, const std::string& value);
+		void parseShortArgumentEquals(char shortName, const std::string_view& value);
 		// вспомогательный метод для parse для обработки длинного названия аргумента со знаком равно
-		void parseLongArgumentEquals(const std::string& longName, const std::string& value);
+		void parseLongArgumentEquals(const std::string_view& longName, const std::string_view& value);
 		// вспомогательный метод для parse для добавление значений к аргументам со знаком равно
-		void executeEquals(Arg* arg, const std::string& value);
+		void executeEquals(Arg* arg, const std::string_view& value);
 
 	private:
 		std::unordered_map<char, Arg*> shortNameArgs_;
-		std::unordered_map<std::string, Arg*> longNameArgs_;
+		std::unordered_map<std::string_view, Arg*> longNameArgs_;
 	};
 } // namespace args_parse

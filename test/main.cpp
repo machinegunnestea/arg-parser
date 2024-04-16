@@ -48,7 +48,7 @@ TEST_CASE("Validation of duplicate arguments", "[args_dup_validation]") {
 	SECTION("Validation of long name existence") {
 		args_parse::SingleArg<bool> arg;
 		arg.setLongName("setLong");
-		std::unordered_map<std::string, args_parse::Arg*> longNameArgs;
+		std::unordered_map<std::string_view, args_parse::Arg*> longNameArgs;
 		REQUIRE(validator.validateLongExists(&arg, longNameArgs));
 	}
 	SECTION("Validation of existing short name") {
@@ -61,7 +61,7 @@ TEST_CASE("Validation of duplicate arguments", "[args_dup_validation]") {
 	SECTION("Validation of existing long name") {
 		args_parse::SingleArg<bool> arg1, arg2;
 		arg1.setLongName("setLong");
-		std::unordered_map<std::string, args_parse::Arg*> longNameArgs = { {"setLong",&arg1} };
+		std::unordered_map<std::string_view, args_parse::Arg*> longNameArgs = { {"setLong",&arg1} };
 		arg2.setLongName("setLong");
 		REQUIRE_FALSE(validator.validateLongExists(&arg2, longNameArgs));
 	}

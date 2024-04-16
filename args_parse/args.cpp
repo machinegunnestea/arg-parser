@@ -60,7 +60,7 @@ namespace args_parse {
 	//обработать значения командной строки
 	void ArgsParser::parse(int argc, const char** argv) {
 		for (int i = 1; i < argc; ++i) {
-			std::string arg = argv[i];
+			std::string_view arg = argv[i];
 			if (arg.size() > 1 && arg[0] == '-') {
 				// если аргумент начинается с --, то он длинный
 				if (arg[1] == '-') {
@@ -68,8 +68,8 @@ namespace args_parse {
 					size_t equalPos = arg.find('=');
 					if (equalPos != std::string::npos) {
 						// аргумент со знаком равенства
-						std::string longName = arg.substr(2, equalPos - 2);
-						std::string value = arg.substr(equalPos + 1);
+						std::string_view longName = arg.substr(2, equalPos - 2);
+						std::string_view value = arg.substr(equalPos + 1);
 						parseLongArgumentEquals(longName, value);
 					}
 					else {
@@ -83,13 +83,13 @@ namespace args_parse {
 					if (equalPos != std::string::npos) {
 						// аргумент со знаком равенства
 						char shortName = arg[1];
-						std::string value = arg.substr(equalPos + 1);
+						std::string_view value = arg.substr(equalPos + 1);
 						parseShortArgumentEquals(shortName, value);
 					}
 					else if (arg.size() > 2) {
 						// аргумент сразу после короткого имени
 						char shortName = arg[1];
-						std::string value = arg.substr(2);
+						std::string_view value = arg.substr(2);
 						parseShortArgumentEquals(shortName, value);
 					}
 					else {
@@ -113,7 +113,7 @@ namespace args_parse {
 	}
 
 	// обработать короткие  аргументы со знаком равно
-	void ArgsParser::parseShortArgumentEquals(char shortName, const std::string& value) {
+	void ArgsParser::parseShortArgumentEquals(char shortName, const std::string_view& value) {
 		auto iter = shortNameArgs_.find(shortName);
 		if (iter != shortNameArgs_.end()) {
 			executeEquals(iter->second, value);
@@ -124,7 +124,7 @@ namespace args_parse {
 	}
 
 	// обработать длинные аргументы
-	void ArgsParser::parseLongArgument(const std::string& longName, int argc, const char** argv, int& i) {
+	void ArgsParser::parseLongArgument(const std::string_view& longName, int argc, const char** argv, int& i) {
 		auto iter = longNameArgs_.find(longName);
 		if (iter != longNameArgs_.end()) {
 			executeArgument(iter->second, argc, argv, i);
@@ -134,7 +134,7 @@ namespace args_parse {
 		}
 	}
 	// обработать длинные аргументы со знаком равно
-	void ArgsParser::parseLongArgumentEquals(const std::string& longName, const std::string& value) {
+	void ArgsParser::parseLongArgumentEquals(const std::string_view& longName, const std::string_view& value) {
 		auto iter = longNameArgs_.find(longName);
 		if (iter != longNameArgs_.end()) {
 			executeEquals(iter->second, value);
@@ -144,6 +144,7 @@ namespace args_parse {
 		}
 	}
 
+	// ref to spesialization function
 	// добавить значения к аргументам
 	void ArgsParser::executeArgument(Arg* arg, int argc, const char** argv, int& i) {
 		if (dynamic_cast<MultiArg<int>*>(arg) != nullptr) {
@@ -211,7 +212,7 @@ namespace args_parse {
 			}
 		}
 	}
-	void ArgsParser::executeEquals(Arg* arg, const std::string& value) {
+	void ArgsParser::executeEquals(Arg* arg, const std::string_view& value) {
 		// Если аргумент типа BoolArg, не ожидается значение
 		if (dynamic_cast<SingleArg<bool>*>(arg) != nullptr) {
 			arg->setValue("true");

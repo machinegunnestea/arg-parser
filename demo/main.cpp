@@ -16,6 +16,7 @@ int main(int argc, const char** argv) {
 	number.SetDescription("single int argument shows Input g value [int]");
 	output.SetDescription("single string argument shows Output o value [string]");
 	flo.SetDescription("single float argument shows Input f value [float]");
+	us.SetDescription("user single user argument shows time converted to microseconds [value][measure]");
 
 	args_parse::MultiArg<int> multiInt('a', "age");
 	args_parse::MultiArg<std::string> multiString('s', "str");

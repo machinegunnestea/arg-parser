@@ -13,7 +13,7 @@ namespace args_parse {
 		static bool validateShortExists(const Arg* arg, const std::unordered_map<char, Arg*>& shortNameArgs_);
 
 		static bool validateLongIsNotSet(const Arg* arg);
-		static bool validateLongExists(const Arg* arg, const std::unordered_map<std::string, Arg*>& longNameArgs_);
+		static bool validateLongExists(const Arg* arg, const std::unordered_map<std::string_view, Arg*>& longNameArgs_);
 
 		static bool validateInt(const std::string& value);
 		static bool validateFloat(const std::string& value);

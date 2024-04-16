@@ -42,7 +42,7 @@ namespace args_parse {
 	}
 
 	// проверка: длинное имя уже существует
-	bool Validator::validateLongExists(const Arg* arg, const std::unordered_map<std::string, Arg*>& longNameArgs_) {
+	bool Validator::validateLongExists(const Arg* arg, const std::unordered_map<std::string_view, Arg*>& longNameArgs_) {
 		if (longNameArgs_.find(arg->longName()) != longNameArgs_.end()) {
 			std::cerr << "Error: Long name '" << arg->longName() << "' already exists." << std::endl;
 			return false;
@@ -61,10 +61,9 @@ namespace args_parse {
 
 	// проверка: у аргумента существует значение, оно целочисленное
 	bool Validator::validateInt(const std::string& value) {
-		int intValue;
 		// проверка целочисленности
 		try {
-			intValue = std::stoi(value);
+			std::ignore = std::stoi(value);
 		}
 		catch (const std::exception& e) {
 			std::cerr << "Error: Invalid integer value:" << e.what() << std::endl;
@@ -74,10 +73,10 @@ namespace args_parse {
 	}
 	// проверка: у аргумента существует значение, оно c плавающей запятой
 	bool Validator::validateFloat(const std::string& value) {
-		int intValue;
 		// проверка целочисленности
 		try {
-			intValue = std::stof(value);
+			std::ignore = std::stof(value);
+			//(void)  std::stof(value); // стилизация си
 		}
 		catch (const std::exception& e) {
 			std::cerr << "Error: Invalid float value:" << e.what() << std::endl;
