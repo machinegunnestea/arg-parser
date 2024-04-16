@@ -10,13 +10,13 @@ int main(int argc, const char** argv) {
 	args_parse::SingleArg<int> number('g', "getNumber");
 	args_parse::SingleArg<std::string> output('o', "output");
 	args_parse::SingleArg<float> flo('f', "float");
-	args_parse::SingleArg<args_parse::UserChrono> us('u', "user");
+	//args_parse::SingleArg<args_parse::UserChrono> us('u', "user");
 
 	help.SetDescription("single bool argument shows the list of the arguments");
 	number.SetDescription("single int argument shows Input g value [int]");
 	output.SetDescription("single string argument shows Output o value [string]");
 	flo.SetDescription("single float argument shows Input f value [float]");
-	us.SetDescription("user single user argument shows time converted to microseconds [value][measure]");
+	//us.SetDescription("user single user argument shows time converted to microseconds [value][measure]");
 
 	args_parse::MultiArg<int> multiInt('a', "age");
 	args_parse::MultiArg<std::string> multiString('s', "str");
@@ -33,7 +33,7 @@ int main(int argc, const char** argv) {
 	parser.add(&number);
 	parser.add(&output);
 	parser.add(&flo);
-	parser.add(&us);
+	//parser.add(&us);
 
 
 	parser.add(&multiInt);
@@ -58,15 +58,12 @@ int main(int argc, const char** argv) {
 		std::cout << "Input g value: " << number.value() << std::endl;
 	}
 	// if getNumber was activated
-	if (us.isDefined()) {
-		// Get the value of the time argument
-		args_parse::UserChrono timeValue = us.value();
-		// Do something with the time value
-		std::cout << "Time argument value: " << timeValue.GetMicroseconds().count() << " microseconds" << std::endl;
-	}
-	else {
-		std::cout << "Time argument not provided." << std::endl;
-	}
+	//if (us.isDefined()) {
+	//	// Get the value of the time argument
+	//	args_parse::UserChrono timeValue = us.value();
+	//	// Do something with the time value
+	//	std::cout << "Time argument value: " << timeValue.GetMicroseconds().count() << " microseconds" << std::endl;
+	//}
 
 	// if float was activated
 	if (flo.isDefined()) {
