@@ -39,8 +39,3 @@
 .vs
 .*.sw?
 CMakeUserPresets.json
-CMakeLists.txt
-/args_parse/CMakeLists.txt
-/demo/CMakeLists.txt
-/test/CMakeLists.txt
-
