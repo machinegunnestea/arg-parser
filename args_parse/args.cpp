@@ -144,82 +144,17 @@ namespace args_parse {
 		}
 	}
 
-	// ref to spesialization function
 	// добавить значения к аргументам
 	void ArgsParser::executeArgument(Arg* arg, int argc, const char** argv, int& i) {
-		if (dynamic_cast<MultiArg<int>*>(arg) != nullptr) {
-			while (i + 1 < argc) {
-				std::string value = argv[i + 1];
-				if (value.empty() || value[0] == '-')
-					break;
-				if (!Validator::validateInt(value)) {
-					break;
-				}
-				arg->setValue(value);
-				++i;
-			}
-		}
-		else if (dynamic_cast<MultiArg<std::string>*>(arg) != nullptr) {
-			while (i + 1 < argc) {
-				std::string value = argv[i + 1];
-				if (value.empty() || value[0] == '-')
-					break;
-				if (!Validator::validateStringLength(value, 50)) {
-					break;
-				}
-				arg->setValue(value);
-				++i;
-			}
-		}
-		else if (dynamic_cast<MultiArg<bool>*>(arg) != nullptr) {
-			while (i + 1 < argc) {
-				std::string value = argv[i + 1];
-				if (value.empty() || value[0] == '-')
-					break;
-				if (value == "true" || value == "false") {
-					arg->setValue(value);
-				}
-				else {
-					break;
-				}
-				arg->setValue(value);
-				++i;
-			}
-		}
-		else if (dynamic_cast<MultiArg<float>*>(arg) != nullptr) {
-			while (i + 1 < argc) {
-				std::string value = argv[i + 1];
-				if (value.empty() || value[0] == '-')
-					break;
-				if (!std::stof(value)) {
-					break;
-				}
-				arg->setValue(value);
-				++i;
-			}
-		}
-		// если аргумент типа bool, то не ожидаем от него значения в командной строке
-		else if (dynamic_cast<SingleArg<bool>*>(arg) != nullptr) {
-			arg->setValue("true");
-		}
-		// для остальных типов данных ожидаем значение для аргумента
-		else {
-			if (i + 1 < argc) {
-				arg->setValue(argv[++i]);
-			}
-			else {
-				arg->setValue("true");
-			}
+		while (i + 1 < argc) {
+			std::string value = argv[i + 1];
+			if (value.empty() || value[0] == '-')
+				break;
+			arg->setValue(value);
+			++i;
 		}
 	}
 	void ArgsParser::executeEquals(Arg* arg, const std::string_view& value) {
-		// Если аргумент типа BoolArg, не ожидается значение
-		if (dynamic_cast<SingleArg<bool>*>(arg) != nullptr) {
-			arg->setValue("true");
-		}
-		// Для остальных типов данных ожидается значение аргумента
-		else {
-			arg->setValue(value);
-		}
+		arg->setValue(value);
 	}
 } // namespace args_parse

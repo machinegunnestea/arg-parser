@@ -48,7 +48,6 @@ namespace args_parse {
 	};
 
 	// ожидает операнд в виде [число][единица измерения], например 12s, 12d, 12m
-	// конвертирует в микросекунды
 	inline bool ParseUserChrono(UserChrono& userChrono, const std::string_view& operand) {
 		//std::stringstream ss{ operand.data() };
 		if (operand.size() < 2) // Ensure operand has at least two characters
@@ -56,7 +55,7 @@ namespace args_parse {
 		// string_view error message
 		long long value;
 		char type = operand.back();
-		std::string valueStr = operand.substr(0, operand.size() - 1);
+		std::string valueStr = std::string(operand).substr(0, operand.size() - 1);
 		std::stringstream ss{ valueStr.data() };
 
 		ss >> value;
@@ -105,46 +104,6 @@ namespace args_parse {
 		{
 			std::cerr << "Error: Unsupported type for SingleArg setValue: " << value << std::endl;
 		}
-		//void setValue1(const std::string_view& value)  {
-		//	if constexpr (std::is_same_v<T, std::string_view>) {
-		//		value_ = value;
-		//		defined_ = true;
-		//	}
-		//	else if constexpr (std::is_same_v<T, int>) {
-		//		try {
-		//			value_ = std::stoi(std::string(value));
-		//			defined_ = true;
-		//		}
-		//		catch (...) {
-		//			std::cerr << "Error: Invalid integer value: " << value << std::endl;
-		//		}
-		//	}
-		//	else if constexpr (std::is_same_v<T, float>) {
-		//		try {
-		//			value_ = std::stof(std::string(value));
-		//			defined_ = true;
-		//		}
-		//		catch (...) {
-		//			std::cerr << "Error: Invalid float value: " << value << std::endl;
-		//		}
-		//	}
-		//	else if constexpr (std::is_same_v<T, bool>) {
-		//		// Handle boolean value (e.g., 'true', 'false')
-		//		if (value == "true" || value == "1")
-		//			value_ = true;
-		//		else if (value == "false" || value == "0")
-		//			value_ = false;
-		//		else
-		//			std::cerr << "Error: Invalid boolean value: " << value << std::endl;
-		//		defined_ = true;
-		//	}
-		//	if constexpr (std::is_same_v<T, UserChrono>) {
-		//		if (!ParseUserChrono(value_, std::string(value))) {
-		//			std::cerr << "Error: Invalid UserChrono value: " << value << std::endl;
-		//		}
-		//		defined_ = true;
-		//	}
-		//}
 
 		// метод для получения значения аргумента
 		const T& value() const { return value_; }
@@ -156,54 +115,6 @@ namespace args_parse {
 		bool defined_ = false;
 	};
 
-	
-	template<>
-	inline void SingleArg<int>::setValue(const std::string_view& value) {
-		try {
-			value_ = std::stoi(std::string(value));
-			defined_ = true;
-		}
-		catch (...) {
-			std::cerr << "Error: Invalid integer value: " << value << std::endl;
-		}
-	}
-
-	template<>
-	inline void SingleArg<float>::setValue(const std::string_view& value) {
-		try {
-			value_ = std::stof(std::string(value));
-			defined_ = true;
-		}
-		catch (...) {
-			std::cerr << "Error: Invalid float value: " << value << std::endl;
-		}
-	}
-
-	template<>
-	inline void SingleArg<bool>::setValue(const std::string_view& value) {
-		if (std::string(value) == "true" || std::string(value) == "1")
-			value_ = true;
-		else if (std::string(value) == "false" || std::string(value) == "0")
-			value_ = false;
-		else
-			std::cerr << "Error: Invalid boolean value: " << value << std::endl;
-		defined_ = true;
-	}
-
-	template<>
-	inline void SingleArg<std::string>::setValue(const std::string_view& value) {
-		value_ = value;
-		defined_ = true;
-	}
-
-	template<>
-	inline void SingleArg<UserChrono>::setValue(const std::string_view& value) {
-		if (!ParseUserChrono(value_, value)) {
-			std::cerr << "Error: Invalid UserChrono value: " << value << std::endl;
-		}
-		defined_ = true;
-	}
-
 	// Шаблон класса для аргумента с множественным значением
 	template<typename T>
 	class MultiArg : public Arg {
@@ -214,35 +125,9 @@ namespace args_parse {
 
 		//ref to template
 		// метод для установки значения аргумента
-		void setValue(const std::string_view& value) override {
-			if constexpr (std::is_same_v<T, std::string>) {
-				values_.push_back(std::string(value));
-			}
-			else if constexpr (std::is_same_v<T, int>) {
-				try {
-					values_.push_back(std::stoi(std::string(value)));
-				}
-				catch (...) {
-					std::cerr << "Error: Invalid integer value: " << value << std::endl;
-				}
-			}
-			else if constexpr (std::is_same_v<T, float>) {
-				try {
-					values_.push_back(std::stof(std::string(value)));
-				}
-				catch (...) {
-					std::cerr << "Error: Invalid float value: " << value << std::endl;
-				}
-			}
-			else if constexpr (std::is_same_v<T, bool>) {
-				// Handle boolean value (e.g., 'true', 'false')
-				if (value == "true" || value == "1")
-					values_.push_back(true);
-				else if (value == "false" || value == "0")
-					values_.push_back(false);
-				else
-					std::cerr << "Error: Invalid boolean value: " << value << std::endl;
-			}
+		void setValue(const std::string_view& value) override
+		{
+			std::cerr << "Error: Unsupported type for SingleArg setValue: " << value << std::endl;
 		}
 
 		// метод для получения значения аргумента
@@ -279,4 +164,96 @@ namespace args_parse {
 		std::unordered_map<char, Arg*> shortNameArgs_;
 		std::unordered_map<std::string_view, Arg*> longNameArgs_;
 	};
+
+	template<>
+	inline void SingleArg<int>::setValue(const std::string_view& value) {
+		try {
+			value_ = std::stoi(std::string(value));
+			defined_ = true;
+		}
+		catch (...) {
+			std::cerr << "Error: Invalid integer value: " << value << std::endl;
+		}
+	}
+
+	template<>
+	inline void SingleArg<float>::setValue(const std::string_view& value) {
+		try {
+			value_ = std::stof(std::string(value));
+			defined_ = true;
+		}
+		catch (...) {
+			std::cerr << "Error: Invalid float value: " << value << std::endl;
+		}
+	}
+
+	template<>
+	inline void SingleArg<bool>::setValue(const std::string_view& value) {
+		if (std::string(value) == "true" || std::string(value) == "1")
+		{
+			value_ = true;
+			defined_ = true;
+		}
+
+		else if (std::string(value) == "false" || std::string(value) == "0")
+		{
+			value_ = false;
+			defined_ = true;
+		}
+		else
+			std::cerr << "Error: Invalid boolean value: " << value << std::endl;
+	}
+
+	template<>
+	inline void SingleArg<std::string>::setValue(const std::string_view& value) {
+		value_ = value;
+		defined_ = true;
+	}
+
+	template<>
+	inline void SingleArg<UserChrono>::setValue(const std::string_view& value) {
+		UserChrono tempChrono;
+		if (ParseUserChrono(tempChrono, value)) {
+			value_ = tempChrono;
+			defined_ = true;
+		}
+		else {
+			std::cerr << "Error: Invalid UserChrono value: " << value << std::endl;
+		}
+	}
+
+	template<>
+	inline void MultiArg<int>::setValue(const std::string_view& value) {
+		try {
+			values_.push_back(std::stoi(std::string(value)));
+		}
+		catch (...) {
+			std::cerr << "Error: Invalid int value: " << value << std::endl;
+		}
+	}
+
+	template<>
+	inline void MultiArg<float>::setValue(const std::string_view& value) {
+		try {
+			values_.push_back(std::stof(std::string(value)));
+		}
+		catch (...) {
+			std::cerr << "Error: Invalid float value: " << value << std::endl;
+		}
+	}
+
+	template<>
+	inline void MultiArg<bool>::setValue(const std::string_view& value) {
+		if (value == "true" || value == "1")
+			values_.push_back(true);
+		else if (value == "false" || value == "0")
+			values_.push_back(false);
+		else
+			std::cerr << "Error: Invalid boolean value: " << value << std::endl;
+	}
+
+	template<>
+	inline void MultiArg<std::string>::setValue(const std::string_view& value) {
+		values_.push_back(std::string(value));
+	}
 } // namespace args_parse

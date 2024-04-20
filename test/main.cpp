@@ -110,20 +110,20 @@ TEST_CASE("Parsing of arguments", "[args_parsing]") {
 	args_parse::ArgsParser parser;
 
 	SECTION("Parsing short arguments") {
-		args_parse::SingleArg<bool> arg('b', "bool");
+		args_parse::SingleArg<int> arg('i', "int");
 		parser.add(&arg);
 
-		const char* argv[] = { "args_parse_demo", "-b" };
+		const char* argv[] = { "args_parse_demo", "-i", "12" };
 		const int argc = static_cast<int>(std::size(argv));
 
 		parser.parse(argc, argv);
 		REQUIRE(arg.isDefined());
 	}
 	SECTION("Parsing long arguments") {
-		args_parse::SingleArg<bool> arg('b', "bool");
+		args_parse::SingleArg<int> arg('i', "int");
 		parser.add(&arg);
 
-		const char* argv[] = { "args_parse_demo", "--bool" };
+		const char* argv[] = { "args_parse_demo", "--int", "12" };
 		const int argc = static_cast<int>(std::size(argv));
 
 		parser.parse(argc, argv);
