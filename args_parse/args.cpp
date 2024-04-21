@@ -3,27 +3,27 @@
 #include <iostream>
 
 namespace args_parse {
-	// возвращаем имя короткого аргумента
+	/// @brief возвращаем имя короткого аргумента
 	char Arg::shortName() const {
 		return shortName_;
 	}
 
-	// возвращаем имя длинного аргумента
+	/// @brief возвращаем имя длинного аргумента
 	const std::string& Arg::longName() const {
 		return longName_;
 	}
 
-	// установка короткого имени аргумента
+	/// @brief установка короткого имени аргумента
 	void Arg::setShortName(char shortName) {
 		shortName_ = shortName;
 	}
 
-	// установка длинного имени аргумента
+	/// @brief установка длинного имени аргумента
 	void Arg::setLongName(const std::string& longName) {
 		longName_ = longName;
 	}
 
-	// добавление аргумента в парсер
+	/// @brief добавление аргумента в парсер
 	bool ArgsParser::add(Arg* arg) {
 		// проверка: имя у аргумента не пустое
 		if (!Validator::validateNewArgument(arg))
@@ -49,7 +49,7 @@ namespace args_parse {
 		return true;
 	}
 
-	// вывести справку
+	/// @brief вывести справку
 	void ArgsParser::printHelp() const {
 		std::cout << "Usage:\t[options]\t[description]" << std::endl;
 		for (const auto& pair : longNameArgs_) {
@@ -57,7 +57,7 @@ namespace args_parse {
 		}
 	}
 
-	//обработать значения командной строки
+	/// @briefобработать значения командной строки
 	void ArgsParser::parse(int argc, const char** argv) {
 		for (int i = 1; i < argc; ++i) {
 			std::string_view arg = argv[i];
@@ -101,7 +101,7 @@ namespace args_parse {
 		}
 	}
 
-	// обработать короткие и сокращенные аргументы
+	/// @brief обработать короткие и сокращенные аргументы
 	void ArgsParser::parseShortArgument(char shortName, int argc, const char** argv, int& i) {
 		auto iter = shortNameArgs_.find(shortName);
 		if (iter != shortNameArgs_.end()) {
@@ -112,7 +112,7 @@ namespace args_parse {
 		}
 	}
 
-	// обработать короткие  аргументы со знаком равно
+	/// @brief обработать короткие  аргументы со знаком равно
 	void ArgsParser::parseShortArgumentEquals(char shortName, const std::string_view& value) {
 		auto iter = shortNameArgs_.find(shortName);
 		if (iter != shortNameArgs_.end()) {
@@ -123,7 +123,7 @@ namespace args_parse {
 		}
 	}
 
-	// обработать длинные аргументы
+	/// @brief обработать длинные аргументы
 	void ArgsParser::parseLongArgument(const std::string_view& longName, int argc, const char** argv, int& i) {
 		auto iter = longNameArgs_.find(longName);
 		if (iter != longNameArgs_.end()) {
@@ -133,7 +133,7 @@ namespace args_parse {
 			std::cerr << "Error: Unknown argument '--" << longName << "'" << std::endl;
 		}
 	}
-	// обработать длинные аргументы со знаком равно
+	/// @brief обработать длинные аргументы со знаком равно
 	void ArgsParser::parseLongArgumentEquals(const std::string_view& longName, const std::string_view& value) {
 		auto iter = longNameArgs_.find(longName);
 		if (iter != longNameArgs_.end()) {
@@ -144,7 +144,7 @@ namespace args_parse {
 		}
 	}
 
-	// добавить значения к аргументам
+	/// @brief добавить значения к аргументам
 	void ArgsParser::executeArgument(Arg* arg, int argc, const char** argv, int& i) {
 		while (i + 1 < argc) {
 			std::string value = argv[i + 1];

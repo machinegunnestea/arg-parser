@@ -7,6 +7,7 @@
 #include <sstream>
 
 namespace args_parse {
+	/// @brief Класс для представления аргументов командной строки
 	class Arg {
 	public:
 		// конструктор для короткого и длинного имени аргумента
@@ -35,7 +36,7 @@ namespace args_parse {
 		std::string description_;
 	};
 
-	// пользовательский класс для подсчета времени
+	/// @brief пользовательский класс для подсчета времени
 	class UserChrono {
 		std::chrono::microseconds m_;
 	public:
@@ -47,7 +48,7 @@ namespace args_parse {
 		bool ParseUserChrono(UserChrono& userChrono, const std::string& operand);
 	};
 
-	// ожидает операнд в виде [число][единица измерения], например 12s, 12d, 12m
+	/// @brief ожидает операнд в виде [число][единица измерения], например 12s, 12d, 12m
 	inline bool ParseUserChrono(UserChrono& userChrono, const std::string_view& operand) {
 		//std::stringstream ss{ operand.data() };
 		if (operand.size() < 2) // Ensure operand has at least two characters
@@ -90,7 +91,7 @@ namespace args_parse {
 		return true;
 	}
 
-	// Шаблон класса для аргумента с единственным значением
+	/// @brief Шаблон класса для аргумента с единственным значением
 	template<typename T>
 	class SingleArg : public Arg {
 	public:
@@ -115,7 +116,7 @@ namespace args_parse {
 		bool defined_ = false;
 	};
 
-	// Шаблон класса для аргумента с множественным значением
+	/// @brief Шаблон класса для аргумента с множественным значением
 	template<typename T>
 	class MultiArg : public Arg {
 	public:
@@ -139,6 +140,7 @@ namespace args_parse {
 		std::vector<T> values_;
 	};
 
+	/// @brief Класс для парсинга аргументов командной строки
 	class ArgsParser {
 	public:
 		// добавление аргумента
@@ -164,7 +166,7 @@ namespace args_parse {
 		std::unordered_map<char, Arg*> shortNameArgs_;
 		std::unordered_map<std::string_view, Arg*> longNameArgs_;
 	};
-
+	// Специализация шаблонов метода setValue для различных типов данных
 	template<>
 	inline void SingleArg<int>::setValue(const std::string_view& value) {
 		try {

@@ -1,5 +1,5 @@
 # В современном CMake рекомендуется сразу задавать нужную версию CMake.
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.27)
 
 # Говорим CMake что за проект.
 project(args_parse_lab LANGUAGES CXX)
@@ -33,6 +33,7 @@ find_package(Catch2 CONFIG REQUIRED)
 # Подключаем подпроекты.
 add_subdirectory(args_parse)
 add_subdirectory(demo)
+add_subdirectory(directory)
 
 # Разрешаем поддержку unit-тестов.
 include(CTest)
